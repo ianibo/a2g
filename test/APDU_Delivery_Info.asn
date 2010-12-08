@@ -1,0 +1,35 @@
+ILL-APDU-Delivery-Info DEFINITIONS  ::=
+	-- the object identifier for this extension, registered with
+	-- the Interlibrary Loan Application Standards Maintenance
+	-- Agency, is 1.0.10161.13.3
+
+BEGIN
+
+IMPORTS System-Address, System-Id from ISO-10161-ILL-1;
+
+APDU-Delivery-Info::=SEQUENCE{
+  sender-info	  	[0] IMPLICIT SEQUENCE OF APDU-Delivery-Parameters,
+  recipient-info	[1] IMPLICIT SEQUENCE OF APDU-Delivery-Parameters,
+  transponder-info 	[2] IMPLICIT SEQUENCE OF APDU-Delivery-Parameters
+OPTIONAL
+}
+
+APDU-Delivery-Parameters::=SEQUENCE {
+	encoding 	[0] IMPLICIT SEQUENCE SIZE (1..3) OF APDU-Encoding,
+				--provides, in preferred order, the types
+				--of encoding acceptable at the address
+				--indicated in transport
+	transport	[1] IMPLICIT System-Address,
+	aliases		[2] IMPLICIT SEQUENCE OF System-Id OPTIONAL
+				--provides in unsorted order, the several
+				--System-Ids associated with this
+				--System-Address
+}
+
+APDU-Encoding::=ENUMERATED {
+	eDIFACT		(1),
+	bER-IN-MIME	(2),
+	bER		(3)
+}
+
+END

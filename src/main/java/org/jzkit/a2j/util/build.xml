@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project name="util" default="all" basedir="../../..">
+
+  <!-- ==================================================== -->
+  <!-- $Id: build.xml,v 1.1.1.1 2004/06/18 06:38:13 ibbo Exp $ -->
+  <!-- ==================================================== -->
+
+
+   <target name="init">
+	<property name="dirs.base" value="${basedir}"/>
+	<property name="classdir" value="${dirs.base}/classes"/>
+	<property name="src" value="${dirs.base}/src"/>
+   </target>
+
+   <target name="all"/>
+
+   <target name="clean">
+   </target>
+
+</project>

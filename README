@@ -1,0 +1,1 @@
+A2G is an evolution of a2j, and asn.1 to java precompiler and runtime. A2G is an attempt to bring easy acces to asn.1 declared protocols to a more native groovy environment. Whilst the core of A2J remains pure java, A2G deals in groovy objects for generated dto classes.

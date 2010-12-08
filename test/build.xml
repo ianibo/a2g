@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<!-- $Id: build.xml,v 1.1.1.1 2004/06/18 06:38:13 ibbo Exp $ -->
+
+<project name="jzkit" default="all" basedir=".">
+
+   <!-- See if the user wants to set any build properties first -->
+   <property file="${user.home}/build.properties" />
+
+   <!-- Pick up any defaults not set by the users home props file -->
+   <property file="${basedir}/build.properties" />
+
+   <target name="init">
+        <property name="Name" value="main"/>
+        <property name="name" value="main"/>
+        <property name="dirs.base" value="${basedir}"/>
+        <property name="lib" value="${dirs.base}/../lib"/>
+        <property name="dist" value="${dirs.base}/../dist"/>
+        <property name="classdir" value="${dirs.base}/classes"/>
+        <property name="testdir" value="${dirs.base}/test"/>
+        <property name="testsrc" value="${testdir}/src/java"/>
+        <property name="src" value="${dirs.base}/src/java"/>
+        <property name="testclasses" value="${testdir}/classes"/>
+        <property name="testreport" value="${testdir}/report"/>
+
+        <!-- For ASN Compiler -->
+        <property name="gen_src" value="${dirs.base}/src/gen_java"/>
+        <taskdef name="asn2java" classname="org.jzkit.a2j.codec.comp.A2JAntTask">
+          <classpath>
+            <fileset dir="${lib}">
+              <include name="**/*.jar"/>
+            </fileset>
+            <fileset dir="${dist}">
+              <include name="**/*.jar"/>
+            </fileset>
+          </classpath>
+        </taskdef>
+   </target>
+
+   <target name="all" depends="init">
+     <mkdir dir="${dirs.base}/src"/>
+     <mkdir dir="${gen_src}"/>
+     <asn2java inputAsnFile="${basedir}/z3950v3.asn" 
+               basePackage="fred.splot" 
+               output="${gen_src}"/>
+   </target>
+
+</project>
+

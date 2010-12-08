@@ -1,0 +1,34 @@
+<project name="Proficio">
+<bannerLeft>
+<name>A2J</name>
+<href>http://developer.k-int.com/projects/a2j</href>
+</bannerLeft>
+<bannerRight>
+<name>A2J - ASN.1 To Java Pre-Complier</name>
+<src>http://www.k-int.com/images/k-intlogo.gif</src>
+</bannerRight>
+<skin>
+<groupId>org.apache.maven.skins</groupId>
+<artifactId>maven-default-skin</artifactId>
+<version>1.0-SNAPSHOT</version>
+</skin>
+<publishDate format="dd MMM yyyy" />
+<body>
+<links>
+<item name="k-int" href="http://www.k-int.com/"/>
+<item name="a2j" href="http:/developer.k-int.com/projects/a2j"/>
+<item name="JZKit2" href="http:/developer.k-int.com/projects/jzkit2"/>
+<item name="OpenRequest" href="http:/developer.k-int.com/projects/openrequest"/>
+</links>
+<head>
+<meta name="faq" content="A2J"/>
+</head>
+<menu name="Quick Links">
+<item name="Features" href="/maven-features.html"/>
+</menu>
+<menu name="About A2J">
+<item name="What is A2J?" href="/what-is-A2J.html"/>
+</menu>
+${reports}
+</body>
+</project>

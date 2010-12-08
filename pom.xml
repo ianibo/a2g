@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jzkit</groupId>
+  <artifactId>a2j</artifactId>
+  <name>ASN.1 to Java Compiler</name>
+  <version>2.0.6-SNAPSHOT</version>
+  <url>http://developer.k-int.com/projects.php?page=a2j</url>
+  <description>A Pure Java ASN.1 to Java Stub precompiler(With Ant/Maven plugins) and BER encoding runtime.</description>
+  <licenses>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <ciManagement>
+    <system>continuum</system>
+    <url>http://developer.k-int.com:8081/continuum</url>
+    <notifiers>
+      <notifier>
+        <configuration>
+          <address>ian.ibbotson@k-int.com</address>
+        </configuration>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+  <scm>
+    <url>http://developer.k-int.com/svn/a2j/a2j_v2</url>
+    <connection>scm:svn:http://developer.k-int.com/svn/a2j/a2j_v2/trunk</connection>
+    <developerConnection>scm:svn:svn://developer.k-int.com/home/svn/repositories/a2j/a2j_v2/trunk</developerConnection>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <tagBase>svn://developer.k-int.com/home/svn/repositories/a2j/a2j_v2/tags</tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency> <groupId>commons-logging</groupId> <artifactId>commons-logging</artifactId> <version>1.0</version> </dependency>
+    <dependency><groupId>log4j</groupId><artifactId>log4j</artifactId> <version>1.2.8</version> </dependency>
+    <dependency> <groupId>ant</groupId> <artifactId>ant</artifactId> <version>1.6.5</version> </dependency>
+  </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>config/maven_checks.xml</configLocation>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/j2se/1.5/docs/api</link>
+          </links>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <configuration>
+          <tags>TODO,@todo,FIXME</tags>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <distributionManagement>
+    <repository>
+      <id>k-int-repository</id>
+      <name>Knowledge Intergation Maven2 Repository</name>
+      <url>scp://developer.k-int.com/home/developer.k-int.com/html/maven2</url>
+    </repository>
+    <site>
+      <id>k-int-repository</id>
+      <name>A2J Project Website</name>
+      <url>scp://developer.k-int.com/home/developer.k-int.com/html/projects/a2j/reference/${project.version}</url>
+    </site>
+  </distributionManagement>
+</project>
