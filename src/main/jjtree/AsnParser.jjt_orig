@@ -262,12 +262,9 @@ void ModuleDefinition() : { Token t; }
   ModuleIdentifier() <DEFINITIONS_TKN> [TagDefault()] <GETS_TKN> <BEGIN_TKN> ModuleBody() <END_TKN> 
 }
 
-void TagDefault() : {
-  /* This is header code for TagDefault */
-} 
+void TagDefault() : {} 
 { 	
-   (    <EXPLICIT_TKN> { jjtThis.which = 1; } 
-      | <IMPLICIT_TKN> { jjtThis.which = 2; }) <TAGS_TKN> 
+   (<EXPLICIT_TKN> { jjtThis.which = 1; } |  <IMPLICIT_TKN> { jjtThis.which = 2; }) <TAGS_TKN> 
 }
 
 void ModuleIdentifier() : {  } 
