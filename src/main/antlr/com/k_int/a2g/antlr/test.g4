@@ -1,7 +1,7 @@
 grammar test;
 
 @header { 
-  package com.k_int.a2g.antler;
+package com.k_int.a2g.antlr;
 }
 
 r   : 'hello' ID;

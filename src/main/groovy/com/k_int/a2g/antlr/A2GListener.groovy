@@ -1,8 +1,10 @@
-package com.k_int.a2g.antler;
+package com.k_int.a2g.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
+import com.k_int.a2g.antlr.*;
 
 /**
  * This class provides an empty implementation of {@link ASNListener},

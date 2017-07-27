@@ -45,7 +45,7 @@ If you have some comments/improvements, send me an e-mail.
 grammar ASN;
 
 @header {
-  package com.k_int.a2g.antler;
+package com.k_int.a2g.antlr;
 }
 
 moduleDefinition :  IDENTIFIER (L_BRACE (IDENTIFIER L_PARAN NUMBER R_PARAN)* R_BRACE)?
