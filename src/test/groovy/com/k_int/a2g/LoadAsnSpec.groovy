@@ -18,6 +18,7 @@ class LoadAsnSpec extends Specification {
       asn_codec.registerDefinitions(simple_asn1_definition_is_1)
 
     expect:
+      def example_record = asn_codec.generateSample('SIMPLE_TEST_ASN1','Contact',[:]);
       1==1
 
     // expect:

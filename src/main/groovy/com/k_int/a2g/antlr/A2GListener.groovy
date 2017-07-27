@@ -51,6 +51,16 @@ public class A2GListener extends ASNBaseListener {
     ctx.moduleBody()?.assignmentList().assignment().each { ae ->
       println("Assignment:: ${ae.class.name} ${ae}");
     }
+
+    if ( a2g_module_repository ) {
+      String definition_identifier = ctx.IDENTIFIER;
+      if ( a2g_module_repository[definition_identifier] == null ) {
+        a2g_module_repository[definition_identifier] = ctx;
+      }
+      else {
+        throw new RuntimeException('Attempt to load second set of ASN.1 definitions for an already specified identifier: '+definition_identifier);
+      }
+    }
   }
 	/**
 	 * {@inheritDoc}

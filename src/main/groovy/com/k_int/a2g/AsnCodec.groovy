@@ -10,6 +10,8 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 @Log4j2
 public class AsnCodec {
 
+  private Map definitions = [:]
+
   public AsnCodec() {
     log.debug("New AsnCodec");
   }
@@ -36,7 +38,13 @@ public class AsnCodec {
  
     // Walk it and attach our listener
     ParseTreeWalker walker = new ParseTreeWalker();
-    A2GListener listener = new A2GListener();
+    A2GListener listener = new A2GListener(definitions);
     walker.walk(listener, module_definition_context);
+  }
+
+  public Map generateSample(String defn, String type, Map hints) {
+    log.debug("AsnCodec::generateSample(${defn},${type},${hints})");
+    def result = [:]
+    result;
   }
 }
