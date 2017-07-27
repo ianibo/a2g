@@ -383,12 +383,18 @@ builtinType :
  | setOfType
  | objectidentifiertype
  | objectClassFieldType
+ | nullType
+ | booleanType
 
 	;
 
 objectClassFieldType : definedObjectClass DOT fieldName
 ;
 
+
+nullType :  NULL_LITERAL;
+
+booleanType: BOOLEAN_LITERAL;
 
 setType :  SET_LITERAL  L_BRACE  (extensionAndException  optionalExtensionMarker  | componentTypeLists)? R_BRACE
 	;
