@@ -1,0 +1,27 @@
+plugins {
+  id "ca.coglinc.javacc" version "2.4.0"
+  id "groovy"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
+    testCompile 'junit:junit:4.12'
+}
+
+// compileJavacc {
+//   inputDirectory = file('src/main/javacc')
+//   outputDirectory = file(project.buildDir.absolutePath + '/generated/javacc')
+//   arguments = [grammar_encoding: 'UTF-8', static: 'false']
+//   include '**/*.java'
+// }
+
+compileJjtree {
+  inputDirectory = file('src/main/jjtree')
+  outputDirectory = file(project.buildDir.absolutePath + '/generated/jjtree')
+  include '**/*.java'
+  arguments = [grammar_encoding: 'UTF-8', static: 'false']
+}

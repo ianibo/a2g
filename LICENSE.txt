@@ -1,0 +1,3 @@
+// (c) Knowledge Integration Ltd - All Rights Reserved
+//
+// This file is a placeholder until we decide which OS license is best to use in this case. Until then, no public license is available

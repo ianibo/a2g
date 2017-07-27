@@ -1,0 +1,4 @@
+Contact ::= SEQUENCE {
+  name VisibleString,
+  phone NumericString
+}
