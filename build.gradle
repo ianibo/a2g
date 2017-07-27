@@ -1,4 +1,8 @@
+group 'com.k_int.a2g'
+version '1.0.0-SNAPSHOT'
+
 apply plugin: 'groovy'
+apply plugin: 'antlr'
 
 repositories {
   mavenCentral()
@@ -6,7 +10,15 @@ repositories {
 
 dependencies {
   compile 'org.codehaus.groovy:groovy-all:2.4.12'
+  antlr 'org.antlr:antlr4:4.7'
   compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8.2'
   compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
   testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
 }
+
+
+
+/**
+ * Notes: 
+ *   Some inspiration here: https://stackoverflow.com/questions/36469546/what-is-minimal-sample-gradle-project-for-antlr4-with-antlr-plugin
+ */
