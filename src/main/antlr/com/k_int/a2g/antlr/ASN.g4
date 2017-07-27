@@ -365,6 +365,8 @@ valueAssignment :
 	  ASSIGN_OP
        value
 ;
+
+// This comes through in the TypeContext visitor as builtinType or referencedType
 type : (builtinType | referencedType) (constraint)*
 ;
 builtinType :

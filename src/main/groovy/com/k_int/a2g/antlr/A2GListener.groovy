@@ -20,12 +20,15 @@ public class A2GListener extends ASNBaseListener {
 
   private java.util.Map a2g_module_repository;
   private typemap = [:]
+  private current_assignment = null;
 
   public A2GListener() {
     super();
   }
 
   public A2GListener(java.util.Map a2g_module_repository) {
+    super();
+    log.debug("new A2GListener with access to a2g_module_repository");
     this.a2g_module_repository = a2g_module_repository;
   }
 
@@ -35,8 +38,7 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void enterModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { 
-    log.debug("lenterModuleDefinition ${ctx.IDENTIFIER()}");
-    println("enterModuleDefinition ${ctx.IDENTIFIER()}");
+    log.debug("enterModuleDefinition ${ctx.IDENTIFIER()}");
   }
 
   /**
@@ -45,25 +47,24 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { 
-    log.debug("lexitModuleDefinition ${ctx.IDENTIFIER()}");
-    println("exitModuleDefinition ${ctx.IDENTIFIER()}");
-    log.debug("lexitModuleDefinition -- assignmentList: ${ctx.moduleBody()?.assignmentList()}");
-    println("exitModuleDefinition  -- assignmentList: ${ctx.moduleBody()?.assignmentList()}");
+    // log.debug("lexitModuleDefinition ${ctx.IDENTIFIER()}");
+    // log.debug("lexitModuleDefinition -- assignmentList: ${ctx.moduleBody()?.assignmentList()}");
 
-    ctx.moduleBody()?.assignmentList().assignment().each { ae ->
-      println("Assignment:: ${ae.class.name} ${ae}");
-    }
-
-    if ( a2g_module_repository ) {
-      String definition_identifier = ctx.IDENTIFIER;
+    if ( a2g_module_repository != null ) {
+      String definition_identifier = ctx.IDENTIFIER();
       if ( a2g_module_repository[definition_identifier] == null ) {
-        a2g_module_repository[definition_identifier] = [ ctx: ctx, typemap: typemap ];
+        log.debug("Parsed ASN.1, registering new definitions for ${definition_identifier} - typemap contains ${typemap?.size()} entries");
+        a2g_module_repository[definition_identifier] = [ typemap: typemap ];
       }
       else {
         throw new RuntimeException('Attempt to load second set of ASN.1 definitions for an already specified identifier: '+definition_identifier);
       }
     }
+    else {
+      log.warn("No a2g_module_repository defined - this is essentually a NOOP");
+    }
   }
+
   /**
    * {@inheritDoc}
    *
@@ -237,13 +238,26 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterAssignment(ASNParser.AssignmentContext ctx) { }
+  @Override public void enterAssignment(ASNParser.AssignmentContext ctx) { 
+    log.debug("A2GListener::enterAssignment(${ctx.IDENTIFIER()})"); 
+    this.current_assignment = [:]
+     // Will be one of (  valueAssignment
+     //    | typeAssignment
+     //    | parameterizedAssignment
+     //    | objectClassAssignment
+     //   )
+
+  }
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitAssignment(ASNParser.AssignmentContext ctx) { }
+  @Override public void exitAssignment(ASNParser.AssignmentContext ctx) { 
+    log.debug("Adding definition for ${ctx.IDENTIFIER()} to this definitions typemap");
+    this.typemap[ctx.IDENTIFIER()] = this.current_assignment
+    this.current_assignment = null;
+  }
   /**
    * {@inheritDoc}
    *
@@ -304,7 +318,7 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitRootComponentTypeList(ASNParser.RootComponentTypeListContext ctx) { 
-    log.debug("A2GListener::exitRootComponentTypeList");
+    // log.debug("A2GListener::exitRootComponentTypeList");
   }
   /**
    * {@inheritDoc}
@@ -1049,7 +1063,9 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitValueAssignment(ASNParser.ValueAssignmentContext ctx) { }
+  @Override public void exitValueAssignment(ASNParser.ValueAssignmentContext ctx) { 
+    // log.debug("A2GListener::exitValueAssignment");
+  }
   /**
    * {@inheritDoc}
    *
@@ -1062,7 +1078,10 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitType(ASNParser.TypeContext ctx) { 
-    log.debug("A2GListener::exitType");
+    // log.debug("A2GListener::exitType");
+    // log.debug("    -> ${ctx.builtinType()}");
+    // log.debug("    -> ${ctx.referencedType()}");
+    // log.debug("    -> ${ctx.constraint()}");
   }
   /**
    * {@inheritDoc}

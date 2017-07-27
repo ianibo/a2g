@@ -16,6 +16,7 @@ class LoadAsnSpec extends Specification {
     then:
       AsnCodec asn_codec = new AsnCodec();
       asn_codec.registerDefinitions(simple_asn1_definition_is_1)
+      asn_codec.dumpDefinitions();
 
     expect:
       def example_record = asn_codec.generateSample('SIMPLE_TEST_ASN1','Contact',[:]);
@@ -40,6 +41,7 @@ class LoadAsnSpec extends Specification {
     then:
       AsnCodec asn_codec = new AsnCodec();
       asn_codec.registerDefinitions(useful_definition_is)
+      asn_codec.dumpDefinitions();
 
     expect:
       1==1
@@ -52,6 +54,7 @@ class LoadAsnSpec extends Specification {
     then:
       AsnCodec asn_codec = new AsnCodec();
       asn_codec.registerDefinitions(z3950_definition_is)
+      asn_codec.dumpDefinitions();
 
     expect:
       1==1

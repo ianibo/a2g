@@ -46,4 +46,9 @@ public class AsnCodec {
     def result = [:]
     result;
   }
+
+  public void dumpDefinitions() {
+    log.debug("Defintitions follow::");
+    log.debug(definitions);
+  }
 }
