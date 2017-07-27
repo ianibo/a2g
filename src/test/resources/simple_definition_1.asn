@@ -1,4 +1,11 @@
+SIMPLE_TEST_ASN1 DEFINITIONS  ::=
+
+BEGIN
+
+
 Contact ::= SEQUENCE {
   name VisibleString,
   phone NumericString
 }
+
+END

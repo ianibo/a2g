@@ -3,27 +3,35 @@ package com.k_int.a2g.antlr;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
 import com.k_int.a2g.antlr.*;
+
+import org.apache.log4j.*
+import groovy.util.logging.*
+
+
 
 /**
  * This class provides an empty implementation of {@link ASNListener},
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
+@Log4j2
 public class A2GListener extends ASNBaseListener {
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { }
+	@Override public void enterModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { 
+  }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { }
+	@Override public void exitModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { 
+    log.debug("exitModuleDefinition");
+  }
 	/**
 	 * {@inheritDoc}
 	 *

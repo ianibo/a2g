@@ -16,11 +16,12 @@ public class AsnCodec {
 
   public AsnCodec registerDefinitions(InputStream is) {
     log.debug("AsnCodec::registerDefinitions(InputStream)");
+    parseASNInputStream(is);
     return this
   }
 
 
-  private void parseASNInputStream() {
+  private void parseASNInputStream(is) {
     // Get our lexer
     ASNLexer lexer = new ASNLexer(new ANTLRInputStream(is));
  
