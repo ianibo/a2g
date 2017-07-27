@@ -493,13 +493,13 @@ extensionAdditionAlternative  :  extensionAdditionAlternativesGroup | namedType
 extensionAdditionAlternativesGroup  :  DOUBLE_L_BRACKET  versionNumber  alternativeTypeList  DOUBLE_R_BRACKET
 ;
 
-taggedType: tag ( EXPLICIT_LITERAL | IMPLICIT_LITERAL ) type
+taggedType: tag ( EXPLICIT_LITERAL | IMPLICIT_LITERAL )? type
 ;
 
-tag: L_BRACKET (tagClass) tagClassNumber R_BRACKET
+tag: L_BRACKET tagClass? tagClassNumber R_BRACKET
 ;
 
-tagClass: UNIVERSAL_LITERAL | APPLICATION_LITERAL | PRIVATE_LITERAL
+tagClass: ( UNIVERSAL_LITERAL | APPLICATION_LITERAL | PRIVATE_LITERAL )
 ;
 
 tagClassNumber: NUMBER
