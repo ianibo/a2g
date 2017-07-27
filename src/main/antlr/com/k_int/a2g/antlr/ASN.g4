@@ -914,9 +914,9 @@ PDV_LITERAL
 	:	'PDV'
 	;
 
-EXTERNAL_LITERAL
-	:	'EXTERNAL'
-	;
+// EXTERNAL_LITERAL
+// 	:	'EXTERNAL'
+// 	;
 
 OBJECT_LITERAL
 	:	'OBJECT'
@@ -1003,7 +1003,7 @@ HSTRING
 
 
 
-//IDENTIFIER : ('a'..'z'|'A'..'Z') ('0'..'9'|'a'..'z'|'A'..'Z')* ;
+// IDENTIFIER : ('a'..'z'|'A'..'Z') ('0'..'9'|'a'..'z'|'A'..'Z')* ;
 CSTRING
     :  '"' ( EscapeSequence | ~('\\'|'"') )* '"'
     ;
