@@ -1,4 +1,4 @@
-    /*
+/*
  [The "BSD licence"]
  Copyright (c) 2007-2008 Terence Parr
  All rights reserved.
@@ -24,6 +24,18 @@
  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+  this grammar seems to be missing support for the TaggedType as a builtin. We see this
+  in z3950v3 as, for example,
+
+    PDU ::= CHOICE{
+       initRequest        [20] IMPLICIT InitializeRequest,
+       initResponse      [21] IMPLICIT InitializeResponse,
+
+   propose adding taggedType to builtinType specification
+
 */
 
 /*
@@ -362,6 +374,7 @@ builtinType :
    octetStringType
  | bitStringType
  | choiceType
+ | taggedType
  | enumeratedType
  | integerType
  | sequenceType
@@ -479,6 +492,19 @@ extensionAdditionAlternative  :  extensionAdditionAlternativesGroup | namedType
 ;
 extensionAdditionAlternativesGroup  :  DOUBLE_L_BRACKET  versionNumber  alternativeTypeList  DOUBLE_R_BRACKET
 ;
+
+taggedType: tag ( EXPLICIT_LITERAL | IMPLICIT_LITERAL ) type
+;
+
+tag: L_BRACKET (tagClass) tagClassNumber R_BRACKET
+;
+
+tagClass: UNIVERSAL_LITERAL | APPLICATION_LITERAL | PRIVATE_LITERAL
+;
+
+tagClassNumber: NUMBER
+;
+
 
 rootAlternativeTypeList  : alternativeTypeList
 ;

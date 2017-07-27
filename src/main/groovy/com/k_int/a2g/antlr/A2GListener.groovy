@@ -17,12 +17,25 @@ import groovy.util.logging.*
  */
 @Log4j2
 public class A2GListener extends ASNBaseListener {
+
+  private java.util.Map a2g_module_repository;
+
+  public A2GListener() {
+    super();
+  }
+
+  public A2GListener(java.util.Map a2g_module_repository) {
+    this.a2g_module_repository = a2g_module_repository;
+  }
+
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { 
+    log.debug("lenterModuleDefinition ${ctx.IDENTIFIER()}");
+    println("enterModuleDefinition ${ctx.IDENTIFIER()}");
   }
 	/**
 	 * {@inheritDoc}
@@ -30,7 +43,14 @@ public class A2GListener extends ASNBaseListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitModuleDefinition(ASNParser.ModuleDefinitionContext ctx) { 
-    log.debug("exitModuleDefinition");
+    log.debug("lexitModuleDefinition ${ctx.IDENTIFIER()}");
+    println("exitModuleDefinition ${ctx.IDENTIFIER()}");
+    log.debug("lexitModuleDefinition -- assignmentList: ${ctx.moduleBody()?.assignmentList()}");
+    println("exitModuleDefinition  -- assignmentList: ${ctx.moduleBody()?.assignmentList()}");
+
+    ctx.moduleBody()?.assignmentList().assignment().each { ae ->
+      println("Assignment:: ${ae.class.name} ${ae}");
+    }
   }
 	/**
 	 * {@inheritDoc}

@@ -30,4 +30,16 @@ class LoadAsnSpec extends Specification {
     //   42 | -12 | 42
     //   42 | -12 | -42
   }
+
+  def "Test ability to load Z39.50"() {
+    when:
+      InputStream z3950_definition_is = this.getClass().getResourceAsStream('/z3950v3.asn')
+
+    then:
+      AsnCodec asn_codec = new AsnCodec();
+      asn_codec.registerDefinitions(z3950_definition_is)
+
+    expect:
+      1==1
+  }
 }
