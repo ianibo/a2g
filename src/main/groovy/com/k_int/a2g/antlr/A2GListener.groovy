@@ -263,13 +263,19 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterSequenceType(ASNParser.SequenceTypeContext ctx) { }
+  @Override public void enterSequenceType(ASNParser.SequenceTypeContext ctx) { 
+    this.current_assignment.type='SEQUENCE';
+    this.current_assignment.members = []
+  }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitSequenceType(ASNParser.SequenceTypeContext ctx) { }
+  @Override public void exitSequenceType(ASNParser.SequenceTypeContext ctx) { 
+  }
+
   /**
    * {@inheritDoc}
    *
@@ -332,18 +338,95 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitComponentTypeList(ASNParser.ComponentTypeListContext ctx) { }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterComponentType(ASNParser.ComponentTypeContext ctx) { }
+  @Override public void enterComponentType(ASNParser.ComponentTypeContext ctx) { 
+    if ( ctx.namedType() ) {
+      if ( this.current_assignment.members != null ) {
+        def nt = ctx.namedType();
+        if ( nt.type() ) {
+          if ( nt.type().builtinType() ) {
+            if ( nt.type().builtinType().octetStringType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'octetString'])
+            }
+            else if ( nt.type().builtinType().bitStringType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'bitString'])
+            }
+            else if ( nt.type().builtinType().choiceType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'choice'])
+            }
+            else if ( nt.type().builtinType().taggedType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'tagged'])
+            }
+            else if ( nt.type().builtinType().enumeratedType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'enumerated'])
+            }
+            else if ( nt.type().builtinType().integerType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'integer'])
+            }
+            else if ( nt.type().builtinType().sequenceType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'sequence'])
+            }
+            else if ( nt.type().builtinType().sequenceOfType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'sequenceOf'])
+            }
+            else if ( nt.type().builtinType().setType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'set'])
+            }
+            else if ( nt.type().builtinType().setOfType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'setOf'])
+            }
+            else if ( nt.type().builtinType().objectidentifiertype() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'objectidentifier'])
+            }
+            else if ( nt.type().builtinType().objectClassFieldType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'objectClass'])
+            }
+            else if ( nt.type().builtinType().nullType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'nullType'])
+            }
+            else if ( nt.type().builtinType().booleanType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'boolean'])
+            }
+            else {
+              throw new RuntimeException("Unhandled builtin type");
+            }
+
+          }
+          else if ( nt.type().referencedType() ) {
+            if ( nt.type().referencedType().definedType() ) {
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'defined', elementType:nt.type().referencedType().definedType().IDENTIFIER()])
+            }
+            else {
+              throw new RuntimeException("Can't handle non-defined type for referenceType");
+            }
+          }
+          else {
+            throw new RuntimeException("enterComponentType - named type was not builtin or reference");
+          }
+        }
+        else {
+          throw new RuntimeException("enterComponentType namedType seems not to have a type ");
+        }
+      }
+      else {
+        throw new RuntimeException("Processing enterComponentType but this.current_assignment.members is null");
+      }
+    }
+  }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitComponentType(ASNParser.ComponentTypeContext ctx) { }
+  @Override public void exitComponentType(ASNParser.ComponentTypeContext ctx) { 
+  }
+
   /**
    * {@inheritDoc}
    *
@@ -1376,7 +1459,10 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterChoiceType(ASNParser.ChoiceTypeContext ctx) { }
+  @Override public void enterChoiceType(ASNParser.ChoiceTypeContext ctx) { 
+    this.current_assignment.type='CHOICE';
+    this.current_assignment.members = []
+  }
   /**
    * {@inheritDoc}
    *

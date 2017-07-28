@@ -1,0 +1,221 @@
+initRequest {
+    protocolVersion BITSTRING(len=1) 111
+    options BITSTRING(len=2) 11101001-1010001
+    preferredMessageSize 1048576
+    maximumRecordSize 1048576
+    implementationId '81'
+    implementationName 'YAZ'
+    implementationVersion '4.2.30 98864b44c654645bc16b2c54f822dc2e45a93031'
+}
+initResponse {
+    protocolVersion BITSTRING(len=1) 111
+    options BITSTRING(len=2) 11000001-0000001
+    preferredMessageSize 1048576
+    maximumRecordSize 1048576
+    result TRUE
+    implementationId '81'
+    implementationName 'Metaproxy/YAZ'
+    implementationVersion '1.12.0/5.22.0 08d38f312e6a984176b1d1c26ea95103c1addbd7'
+}
+searchRequest {
+    smallSetUpperBound 0
+    largeSetLowerBound 1
+    mediumSetPresentNumber 0
+    replaceIndicator TRUE
+    resultSetName '1'
+    databaseNames {
+        'wikipedia'
+    }
+    {
+        query choice
+        type_1 {
+            attributeSetId OID: 1 2 840 10003 3 1
+            RPNStructure choice
+            {
+                simple choice
+                attributesPlusTerm {
+                    attributes {
+                        {
+                            attributeType 1
+                            numeric 4
+                        }
+                    }
+                    term choice
+                    general OCTETSTRING(len=7) science
+                }
+            }
+        }
+    }
+}
+searchResponse {
+    resultCount 5180
+    numberOfRecordsReturned 0
+    nextResultSetPosition 1
+    searchStatus TRUE
+    resultSetStatus 4
+    additionalSearchInfo {
+        {
+            externallyDefinedInfo {
+                OID: 1 2 840 10003 10 1
+                externallyDefinedInfo choice
+                {
+                    {
+                        {
+                            fullQuery FALSE
+                            {
+                                subqueryExpression choice
+                                term {
+                                    {
+                                        queryTerm choice
+                                        general OCTETSTRING(len=7) science
+                                    }
+                                }
+                            }
+                            subqueryCount 5180
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+presentRequest {
+    resultSetId '1'
+    resultSetStartPoint 1
+    numberOfRecordsRequested 1
+    preferredRecordSyntax OID: 1 2 840 10003 5 10
+}
+presentResponse {
+    numberOfRecordsReturned 1
+    nextResultSetPosition 2
+    presentStatus 0
+    records choice
+    databaseOrSurDiagnostics {
+        {
+            databaseName 'wikipedia'
+            record {
+                {
+                    databaseRecord {
+                        OID: 1 2 840 10003 5 10
+                        databaseRecord choice
+                        OCTETSTRING(len=436) 00436 am  22000613u 450 520029400000856005500294245002500349\X1E  \X1FaAgricultural science is a broad multidisciplinary field of biology that encompasses the parts of exact, natural, economic and social sciences that are used in the practice and understanding of agriculture. (Veterinary science, but not animal science, is often excluded from the definition.\X1E40\X1Fuhttps://en.wikipedia.org/wiki/Agricultural_science\X1E00\X1FaAgricultural science\X1E\X1D
+                    }
+                }
+            }
+        }
+    }
+}
+close {
+    closeReason 0
+}
+close {
+    closeReason 0
+    diagnosticInformation 'Association terminated by client'
+}
+initRequest {
+    protocolVersion BITSTRING(len=1) 111
+    options BITSTRING(len=2) 11101001-1010001
+    preferredMessageSize 1048576
+    maximumRecordSize 1048576
+    implementationId '81'
+    implementationName 'YAZ'
+    implementationVersion '4.2.30 98864b44c654645bc16b2c54f822dc2e45a93031'
+}
+initResponse {
+    protocolVersion BITSTRING(len=1) 111
+    options BITSTRING(len=2) 11000001-0000001
+    preferredMessageSize 1048576
+    maximumRecordSize 1048576
+    result TRUE
+    implementationId '81'
+    implementationName 'Metaproxy/YAZ'
+    implementationVersion '1.12.0/5.22.0 08d38f312e6a984176b1d1c26ea95103c1addbd7'
+}
+searchRequest {
+    smallSetUpperBound 0
+    largeSetLowerBound 1
+    mediumSetPresentNumber 0
+    replaceIndicator TRUE
+    resultSetName '1'
+    databaseNames {
+        'wikipedia'
+    }
+    {
+        query choice
+        type_1 {
+            attributeSetId OID: 1 2 840 10003 3 1
+            RPNStructure choice
+            {
+                simple choice
+                attributesPlusTerm {
+                    attributes {
+                        {
+                            attributeType 1
+                            numeric 4
+                        }
+                    }
+                    term choice
+                    general OCTETSTRING(len=7) science
+                }
+            }
+        }
+    }
+}
+searchResponse {
+    resultCount 5180
+    numberOfRecordsReturned 0
+    nextResultSetPosition 1
+    searchStatus TRUE
+    resultSetStatus 4
+    additionalSearchInfo {
+        {
+            externallyDefinedInfo {
+                OID: 1 2 840 10003 10 1
+                externallyDefinedInfo choice
+                {
+                    {
+                        {
+                            fullQuery FALSE
+                            {
+                                subqueryExpression choice
+                                term {
+                                    {
+                                        queryTerm choice
+                                        general OCTETSTRING(len=7) science
+                                    }
+                                }
+                            }
+                            subqueryCount 5180
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+presentRequest {
+    resultSetId '1'
+    resultSetStartPoint 1
+    numberOfRecordsRequested 1
+    preferredRecordSyntax OID: 1 2 840 10003 5 10
+}
+presentResponse {
+    numberOfRecordsReturned 1
+    nextResultSetPosition 2
+    presentStatus 0
+    records choice
+    databaseOrSurDiagnostics {
+        {
+            databaseName 'wikipedia'
+            record {
+                {
+                    databaseRecord {
+                        OID: 1 2 840 10003 5 10
+                        databaseRecord choice
+                        OCTETSTRING(len=436) 00436 am  22000613u 450 520029400000856005500294245002500349\X1E  \X1FaAgricultural science is a broad multidisciplinary field of biology that encompasses the parts of exact, natural, economic and social sciences that are used in the practice and understanding of agriculture. (Veterinary science, but not animal science, is often excluded from the definition.\X1E40\X1Fuhttps://en.wikipedia.org/wiki/Agricultural_science\X1E00\X1FaAgricultural science\X1E\X1D
+                    }
+                }
+            }
+        }
+    }
+}
