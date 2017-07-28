@@ -59,4 +59,19 @@ public class AsnCodec {
   public Map getDefinition(String definition_id) {
     return definitions[definition_id]
   }
+
+  public byte[] arrayEncode(String specification,String type, Map data) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    encode(specification, type, data, baos)
+    baos.toByteArray()
+  }
+
+  public Map arrayDecode(String specification,String type, byte[] data) {
+    Map result = [:]
+    result;
+  }
+
+  private encode(String specification,String type, Map data, ByteArrayOutputStream baos) {
+  }
+
 }

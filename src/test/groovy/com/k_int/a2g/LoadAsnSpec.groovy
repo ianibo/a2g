@@ -18,6 +18,8 @@ class LoadAsnSpec extends Specification {
       asn_codec.registerDefinitions(simple_asn1_definition_is_1)
       asn_codec.dumpDefinitions();
       asn_codec.dumpDefinition('SIMPLE_TEST_ASN1');
+      byte[] encoded_contact = asn_codec.arrayEncode('SIMPLE_TEST_ASN1','Contact',[ name:'Fred Person' , phone : '012345678' ]);
+      Map decoded_contact = asn_codec.arrayDecode('SIMPLE_TEST_ASN1','Contact',encoded_contact);
 
 
     expect:
