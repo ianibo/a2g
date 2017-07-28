@@ -22,6 +22,30 @@ public class A2GListener extends ASNBaseListener {
   private typemap = [:]
   private current_assignment = null;
 
+  private String extractIdentifier(List<TerminalNode> tnl) {
+    // log.debug("extractIdentifier:${tnl.class.name} ${tnl.join('-')}");
+    // tnl.each { tn ->
+    //   log.debug("Extract terminal node : ${tn.class.name} ${tn}");
+    // }
+    tnl.collect { tn -> tn.getText() }.join(' ')
+  }
+
+  private Object getSingleValue(Object v) {
+    Object result = null;
+    if ( v instanceof List ) {
+      if ( v.size() == 1 ) {
+        result=v.get(0);
+      }
+      else {
+        throw new RuntimeException("Request to getSingleValue for ${v} but cardinality is not 1");
+      }
+    }
+    else {
+      result = v
+    }
+    return v
+  }
+
   public A2GListener() {
     super();
   }
@@ -51,9 +75,9 @@ public class A2GListener extends ASNBaseListener {
     // log.debug("lexitModuleDefinition -- assignmentList: ${ctx.moduleBody()?.assignmentList()}");
 
     if ( a2g_module_repository != null ) {
-      String definition_identifier = ctx.IDENTIFIER();
+      String definition_identifier = extractIdentifier(ctx.IDENTIFIER());
       if ( a2g_module_repository[definition_identifier] == null ) {
-        log.debug("Parsed ASN.1, registering new definitions for ${definition_identifier} - typemap contains ${typemap?.size()} entries");
+        log.debug("Parsed ASN.1, registering new definitions for \"${definition_identifier}\" (${definition_identifier.class.name})- typemap contains ${typemap?.size()} entries");
         a2g_module_repository[definition_identifier] = [ typemap: typemap ];
       }
       else {
@@ -254,8 +278,9 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitAssignment(ASNParser.AssignmentContext ctx) { 
-    log.debug("Adding definition for ${ctx.IDENTIFIER()} to this definitions typemap");
-    this.typemap[ctx.IDENTIFIER()] = this.current_assignment
+    def type_identifier = ctx.IDENTIFIER().getText()
+    log.debug("Adding definition for ${type_identifier} ${type_identifier.class.name} to this definitions typemap");
+    this.typemap[type_identifier] = this.current_assignment
     this.current_assignment = null;
   }
   /**
@@ -399,7 +424,9 @@ public class A2GListener extends ASNBaseListener {
           }
           else if ( nt.type().referencedType() ) {
             if ( nt.type().referencedType().definedType() ) {
-              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'defined', elementType:nt.type().referencedType().definedType().IDENTIFIER()])
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER().getText(), 
+                                                   elementCat:'defined', 
+                                                   elementType:extractIdentifier(nt.type().referencedType().definedType().IDENTIFIER())])
             }
             else {
               throw new RuntimeException("Can't handle non-defined type for referenceType");

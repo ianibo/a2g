@@ -47,8 +47,16 @@ public class AsnCodec {
     result;
   }
 
+  public void dumpDefinition(String definition_id) {
+    log.debug(getDefinition(definition_id));
+  }
+
   public void dumpDefinitions() {
     log.debug("Defintitions follow::");
     log.debug(definitions);
+  }
+
+  public Map getDefinition(String definition_id) {
+    return definitions[definition_id]
   }
 }
