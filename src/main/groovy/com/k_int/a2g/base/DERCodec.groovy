@@ -42,11 +42,11 @@ public class DERCodec extends BaseCodec {
    *
    * return encoded length, -1 is indefinite length encoding
    */
-  public long decodeLength(java.io.InputStream os) {
+  public long decodeLength(java.io.InputStream is) {
     long datalen;
     boolean next_is_indefinite;
 
-    byte lenpart = (byte)read();
+    byte lenpart = (byte)is.read();
 
     if ((lenpart & 0x80) == 0)  { // If bit 8 is 0
       // Single octet length encoding
@@ -62,25 +62,64 @@ public class DERCodec extends BaseCodec {
 
       datalen = 0;
       while (lenpart-- > 0)
-        datalen = (datalen << 8) | ((byte)read() & 0xFF);
+        datalen = (datalen << 8) | ((byte)is.read() & 0xFF);
     }
 
     return datalen;
   }
 
   public long encodeTag(boolean is_constructed,
-                                 int tag_class,
-                                 int tag_number,
-                                 boolean is_optional,
-                                 java.io.OutputStream os) throws java.io.IOException {
+                        int tag_class,
+                        int tag_value,
+                        boolean is_optional,
+                        java.io.OutputStream os) throws java.io.IOException {
+    int l = 0;
+    int k = tag_class;
+    if(is_constructed)
+        k |= 0x20;
+
+    l=1
+    if(tag_value < 31) { // We can encode in a single octet
+      os.write((int) ( k | tag_value ) );
+    }
+    else { // Multiple tag octets
+        // In multiple length tags, first octet gives class & cons, bits 1-5 are all 1
+        os.write((int)(k | 0x1f));
+
+        // Followed by the integer encoding of the tag, base 128
+        l += encodeBase128Int(tag_value);
+    }
+
+    return l;
   }
 
   public int decodeTag(boolean is_constructed,
-                                int tag_class,
-                                int tag_number,
-                                boolean is_optional,
-                                java.io.InputStream is) throws java.io.IOException {
+                       int tag_class,
+                       int tag_value,
+                       boolean is_optional,
+                       java.io.InputStream is) throws java.io.IOException {
+    return 0;
   }
+
+  private long encodeBase128Int(int value, java.io.OutputStream os) throws java.io.IOException {
+    int len = 0;
+    byte[] enc = new byte[10];
+    int pos = 0;
+
+    while ( ( value > 127 ) && ( pos < 9 ) ) { 
+      enc[pos++] = (byte) ( value & 127 );
+      value = value >> 7;
+    }
+    enc[pos] = (byte)value;
+
+    for ( ;pos>=0;pos-- ) { 
+      os.write( (int) ( enc[pos] | ( pos == 0 ? 0 : 128 ) ) );
+      len++
+    }
+
+    return len;
+  }
+
 
   
   public long encodeInteger(java.io.OutputStream os, Integer integer) {
@@ -90,14 +129,14 @@ public class DERCodec extends BaseCodec {
   }
   
   public long encodeNull(java.io.OutputStream os) {
-    long bytes_written = encodeTag(false, UNIVERSAL, NULL, false)
-    bytes_written += encodeLength(0);
+    long bytes_written = encodeTag(false, UNIVERSAL, NULL, false, os)
+    bytes_written += encodeLength(0,os);
     return bytes_written
   }
 
   public Object decodeNull(java.io.InputStream is) {
-    int tag = is.decodeTag(false, UNIVERSAL, NULL, false, is)
-    long length = is.decodeLength(is);
+    int tag = decodeTag(false, UNIVERSAL, NULL, false, is)
+    long length = decodeLength(is);
     return null;
   }
 

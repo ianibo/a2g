@@ -33,7 +33,6 @@ class DEREncodingSpec extends Specification {
 
   }
 
-  /*
   def "test Null encoding"() {
 
     when:
@@ -46,9 +45,12 @@ class DEREncodingSpec extends Specification {
       Object o = der_codec.decodeNull(new java.io.ByteArrayInputStream(encoded_null));
 
     expect:
-      Arrays.equals([(byte)5, (byte)0],encoded_null); 
+      Arrays.equals(encoding,encoded_null); 
       o == null;
+
+    where:
+        nullval | encoding
+        null | (byte[]) [ 5, 0 ]
   }
-  */
 
 }
