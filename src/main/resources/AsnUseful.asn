@@ -28,6 +28,8 @@ VisibleString ::= [UNIVERSAL 26 ] STRING
 
 IA5String ::= [UNIVERSAL 22 ] STRING
 
-GraphicString ::= [UNIVERSAL 27 ] STRING
+GraphicString ::= [UNIVERSAL 25 ] STRING
+
+GeneralString ::= [UNIVERSAL 27 ] STRING
 
 END
