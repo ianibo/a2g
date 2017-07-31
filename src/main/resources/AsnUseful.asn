@@ -15,4 +15,19 @@ EXTERNAL ::= [UNIVERSAL 8] IMPLICIT SEQUENCE {
                    arbitrary         [2] IMPLICIT BIT STRING}
 }
 
+
+NumericString ::= [UNIVERSAL 18 ] STRING
+
+PrintableString ::= [UNIVERSAL 19 ] STRING
+
+TeletexString ::= [UNIVERSAL 20 ] STRING
+
+VideotexString  ::= [UNIVERSAL 21 ] STRING
+
+VisibleString ::= [UNIVERSAL 26 ] STRING
+
+IA5String ::= [UNIVERSAL 22 ] STRING
+
+GraphicString ::= [UNIVERSAL 27 ] STRING
+
 END

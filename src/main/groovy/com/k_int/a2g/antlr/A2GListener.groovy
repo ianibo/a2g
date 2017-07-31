@@ -1613,12 +1613,17 @@ public class A2GListener extends ASNBaseListener {
       if ( type.builtinType() ) {
         def bit = type.builtinType()
         def builtin_type_info = extractBuiltinTypeInfo(bit);
-        log.debug("  --> is a builtin type with defined type ${builtin_type_info}");
+        builtin_type_info.elementName = named_type.IDENTIFIER()
+        this.current_assignment.members.add(builtin_type_info)
+        log.debug("  --> is a builtin type with type ${builtin_type_info}");
       }
       else if ( type.referencedType() ) {
         def rt = type.referencedType()
-        def dt = rt.definedType()
-        log.debug("  --> is a referenced type with defined type ${dt.IDENTIFIER()}");
+        def dt = rt.definedType().IDENTIFIER()
+        def rt_info = [elementName:named_type.IDENTIFIER(), elementCat:'defined', elementType:extractIdentifier(dt)];
+        log.debug("  --> is a referenced type with type ${rt_info}");
+
+        this.current_assignment.members.add(rt_info);
       }
       else {
         throw new RuntimeException("Unable to figure out what to do with named type processing choice");
