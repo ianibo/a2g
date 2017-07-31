@@ -1,6 +1,8 @@
 package com.k_int.a2g.base;
 
-public class DERCodec extends BaseCodec {
+import com.k_int.a2g.base.Constants;
+
+public class DEREncoder extends BaseEncoder {
 
   /**
    * For DER.
@@ -38,36 +40,6 @@ public class DERCodec extends BaseCodec {
     }
   }
 
-  /**
-   *
-   * return encoded length, -1 is indefinite length encoding
-   */
-  public long decodeLength(java.io.InputStream is) {
-    long datalen;
-    boolean next_is_indefinite;
-
-    byte lenpart = (byte)is.read();
-
-    if ((lenpart & 0x80) == 0)  { // If bit 8 is 0
-      // Single octet length encoding
-      // System.err.println("Single octet length encoding");
-      datalen = lenpart;
-    }
-    else if ( ( lenpart & 0x7F ) == 0 ) { // Otherwise we are multiple octets (Maybe 0, which = indefinite)
-      datalen=-1;
-    }
-    else { 
-      next_is_indefinite=false;
-      lenpart &= 0x7F;
-
-      datalen = 0;
-      while (lenpart-- > 0)
-        datalen = (datalen << 8) | ((byte)is.read() & 0xFF);
-    }
-
-    return datalen;
-  }
-
   public long encodeTag(boolean is_constructed,
                         int tag_class,
                         int tag_value,
@@ -93,14 +65,6 @@ public class DERCodec extends BaseCodec {
     return l;
   }
 
-  public int decodeTag(boolean is_constructed,
-                       int tag_class,
-                       int tag_value,
-                       boolean is_optional,
-                       java.io.InputStream is) throws java.io.IOException {
-    return 0;
-  }
-
   private long encodeBase128Int(int value, java.io.OutputStream os) throws java.io.IOException {
     int len = 0;
     byte[] enc = new byte[10];
@@ -120,24 +84,13 @@ public class DERCodec extends BaseCodec {
     return len;
   }
 
-
-  
   public long encodeInteger(java.io.OutputStream os, Integer integer) {
   }
 
-  public Integer decodeInteger(java.io.InputStream is) {
-  }
-  
   public long encodeNull(java.io.OutputStream os) {
-    long bytes_written = encodeTag(false, UNIVERSAL, NULL, false, os)
+    long bytes_written = encodeTag(false, Constants.UNIVERSAL, Constants.NULL, false, os)
     bytes_written += encodeLength(0,os);
     return bytes_written
-  }
-
-  public Object decodeNull(java.io.InputStream is) {
-    int tag = decodeTag(false, UNIVERSAL, NULL, false, is)
-    long length = decodeLength(is);
-    return null;
   }
 
 }
