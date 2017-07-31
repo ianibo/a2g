@@ -130,6 +130,7 @@ public class AsnCodec {
         log.debug("Matched choice ${tal.tag_class} ${tal.tag_value} ${choice_option}");
       }
       else {
+        log.debug("Not ${choice_option}");
       }
     }
 

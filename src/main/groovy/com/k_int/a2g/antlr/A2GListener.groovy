@@ -279,10 +279,11 @@ public class A2GListener extends ASNBaseListener {
    */
   @Override public void exitAssignment(ASNParser.AssignmentContext ctx) { 
     def type_identifier = ctx.IDENTIFIER().getText()
-    log.debug("Adding definition for ${type_identifier} ${type_identifier.class.name} to this definitions typemap");
+    log.debug("EXIT ASSIGNMENT -> Adding definition for ${type_identifier} ${type_identifier.class.name} to this definitions typemap");
     this.typemap[type_identifier] = this.current_assignment
     this.current_assignment = null;
   }
+
   /**
    * {@inheritDoc}
    *
@@ -1456,7 +1457,10 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitChoiceValue(ASNParser.ChoiceValueContext ctx) { }
+  @Override public void exitChoiceValue(ASNParser.ChoiceValueContext ctx) { 
+    // this.current_assignment.members.add(CHOICE)...
+    log.debug("exitChoiceValue(${ctx})");
+  }
   /**
    * {@inheritDoc}
    *
@@ -1575,13 +1579,91 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterAlternativeTypeList(ASNParser.AlternativeTypeListContext ctx) { }
+  @Override public void enterAlternativeTypeList(ASNParser.AlternativeTypeListContext ctx) { 
+  }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitAlternativeTypeList(ASNParser.AlternativeTypeListContext ctx) { }
+  @Override public void exitAlternativeTypeList(ASNParser.AlternativeTypeListContext ctx) { 
+
+    // Register the options for a choice
+    log.debug("exitAlternativeTypeList -- Registering possible options for CHOICE");
+    ctx.namedType().each { named_type ->
+      log.debug("CHOICE OPTION ${named_type.IDENTIFIER()}");
+      def type = named_type.type()
+      if ( type.builtinType() ) {
+        def bit = type.builtinType()
+        def builtin_type_info = extractBuiltinTypeInfo(bit);
+        log.debug("  --> is a builtin type with defined type ${builtin_type_info}");
+      }
+      else if ( type.referencedType() ) {
+        def rt = type.referencedType()
+        def dt = rt.definedType()
+        log.debug("  --> is a referenced type with defined type ${dt.IDENTIFIER()}");
+      }
+      else {
+        throw new RuntimeException("Unable to figure out what to do with named type processing choice");
+      }
+    }
+  }
+
+  public Map extractBuiltinTypeInfo(bit) {
+
+    def result = [:]
+
+    if ( bit.octetStringType() ) {
+      result = [elementCat:'builtin', elementType:'octetString']
+    }
+    else if ( bit.bitStringType() ) {
+      result = [elementCat:'builtin', elementType:'bitString']
+    }
+    else if ( bit.choiceType() ) {
+      result = [elementCat:'builtin', elementType:'choice']
+    }
+    else if ( bit.taggedType() ) {
+      result = [elementCat:'builtin', elementType:'tagged']
+    }
+    else if ( bit.enumeratedType() ) {
+      result = [elementCat:'builtin', elementType:'enumerated']
+    }
+    else if ( bit.integerType() ) {
+      result = [elementCat:'builtin', elementType:'integer']
+    }
+    else if ( bit.sequenceType() ) {
+      result = [elementCat:'builtin', elementType:'sequence']
+    }
+    else if ( bit.sequenceOfType() ) {
+      result = [elementCat:'builtin', elementType:'sequenceOf']
+    }
+    else if ( bit.setType() ) {
+      result = [elementCat:'builtin', elementType:'set']
+    }
+    else if ( bit.setOfType() ) {
+      result = [elementCat:'builtin', elementType:'setOf']
+    }
+    else if ( bit.objectidentifiertype() ) {
+      result = [elementCat:'builtin', elementType:'objectidentifier']
+    }
+    else if ( bit.objectClassFieldType() ) {
+      result = [elementCat:'builtin', elementType:'objectClass']
+    }
+    else if ( bit.nullType() ) {
+      result = [elementCat:'builtin', elementType:'nullType']
+    }
+    else if ( bit.booleanType() ) {
+      result = [elementCat:'builtin', elementType:'boolean']
+    }
+    else {
+      throw new RuntimeException("Unhandled builtin type");
+    }
+
+    return result
+  }
+
+
   /**
    * {@inheritDoc}
    *
