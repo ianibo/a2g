@@ -91,7 +91,7 @@ public class AsnCodec {
         TagAndLength tal = decoder.readNextTagAndLength(is)
 
         // Now decode the contents
-        processContents(tal,specification,type_defn,is,decoder);
+        processContents(tal, spec_defn, type_defn, is, decoder);
       }
       else {
         log.error("Unable to resolve type ${type} in specification ${specification}. Known types: ${spec_defn.keySet()}");
@@ -102,11 +102,11 @@ public class AsnCodec {
     }
   }
 
-  private Object processContents(TagAndLength tal, String specification,Map type_defn,InputStream is, BaseDecoder decoder) {
+  private Object processContents(TagAndLength tal, Map spec_defn, Map type_defn, InputStream is, BaseDecoder decoder) {
     Object result = null;
     switch ( type_defn.type ) {
       case 'CHOICE':
-        result = decodeChoice(tal, specification, type_defn, is, decoder);
+        result = decodeChoice(tal, spec_defn, type_defn, is, decoder);
         break;
       default:
         throw new RuntimeException("Unhandled ASN.1 type ${type_defn.type}");
@@ -117,20 +117,24 @@ public class AsnCodec {
   /**
    *  We map choice elements to a map containing 1 member which is the name of the choice
    */
-  private decodeChoice(TagAndLength tal, String specification, Map type_defn,InputStream is, BaseDecoder decoder) {
-    log.debug("Decode choice");
+  private decodeChoice(TagAndLength tal, Map spec_defn, Map type_defn,InputStream is, BaseDecoder decoder) {
+    log.debug("Decode choice ${tal.tag_class} ${tal.tag_value}");
     def result = [:]
+
     // The encoding of a choice type is the same as the encoding of the selected alternative. TagAndLength therefore is the tagAndLength of the
     // chosen alternative in this case. We must iterate through the possible choices until we find an alternative that matches the decoded tag
+
     type_defn.members.each { choice_option ->
+
+      log.debug("${tal.tag_class} ${tal.tag_class.class.name} ${tal.tag_value} ${tal.tag_value.class.name} ${choice_option.tag.tag_class} ${choice_option.tag.tag_class?.class?.name} ${choice_option.tag.tag_class_number} ${choice_option.tag.tag_class_number.class.name}");
       // See if the tagging of the encoded data matches this part of the specification
-      // ( choice_option.is_implicit ) {
-      if ( ( choice_option.tag_class = tal.tag_class ) && 
-           ( choice_option.tag_value == tal.tag_value) ) {
+      // default tag
+      if ( ( (choice_option.tag.tag_class?:128) == tal.tag_class ) && 
+           ( choice_option.tag.tag_class_number == tal.tag_value) ) {
         log.debug("Matched choice ${tal.tag_class} ${tal.tag_value} ${choice_option}");
       }
       else {
-        log.debug("Not ${choice_option}");
+        log.debug("Not ${choice_option} for ${tal.tag_class} ${tal.tag_value}");
       }
     }
 

@@ -390,16 +390,20 @@ public class A2GListener extends ASNBaseListener {
 
               def tc = null;
               if ( tt.tag().tagClass() ) {
-                if ( tt.tag().tagClass().UNIVERSAL_LITERAL() ) tc = 'UNIVERSAL';
-                if ( tt.tag().tagClass().APPLICATION_LITERAL() ) tc = 'APPLICATION';
-                if ( tt.tag().tagClass().PRIVATE_LITERAL() ) tc = 'PRIVATE';
+                if ( tt.tag().tagClass().UNIVERSAL_LITERAL() ) tc = new Integer(0) // 'UNIVERSAL';
+                if ( tt.tag().tagClass().APPLICATION_LITERAL() ) tc = new Integer(64) // 'APPLICATION';
+                if ( tt.tag().tagClass().PRIVATE_LITERAL() ) tc = new Integer(192) // 'PRIVATE';
+              }
+              else {
+                tc = new Integer(128); // CONTEXT SPECIFIC
               }
 
               // Tag mode defaults to module tag mode or explicit, leave to higher level impl to sort this out!
               this.current_assignment.members.add([elementName: nt.IDENTIFIER(), 
                                                    elementCat:'builtin', 
                                                    elementType:'tagged',
-                                                   tag: [tag_class_number:tt.tag().tagClassNumber().NUMBER(), tag_class: tc],
+                                                   tag: [tag_class_number:Integer.parseInt(tt.tag().tagClassNumber().NUMBER().toString()), 
+                                                         tag_class: tc],
                                                    type: tt.type(),  // tt.type().builtinType or tt.type().referencedType()
                                                    tagMode : tt.IMPLICIT_LITERAL() ? 'IMPLICIT' : ( tt.EXPLICIT_LITERAL() ? 'EXPLICIT' : null ) ])
 
@@ -1666,9 +1670,12 @@ public class A2GListener extends ASNBaseListener {
 
       def tc = null;
       if ( tt.tag().tagClass() ) {
-        if ( tt.tag().tagClass().UNIVERSAL_LITERAL() ) tc = 'UNIVERSAL';
-        if ( tt.tag().tagClass().APPLICATION_LITERAL() ) tc = 'APPLICATION';
-        if ( tt.tag().tagClass().PRIVATE_LITERAL() ) tc = 'PRIVATE';
+        if ( tt.tag().tagClass().UNIVERSAL_LITERAL() ) tc = new Integer(0) // 'UNIVERSAL';
+        if ( tt.tag().tagClass().APPLICATION_LITERAL() ) tc = new Integer(64) // 'APPLICATION';
+        if ( tt.tag().tagClass().PRIVATE_LITERAL() ) tc = new Integer(192) // 'PRIVATE';
+      }
+      else {
+        tc = new Integer(128); // CONTEXT SPECIFIC
       }
 
       def type_info = extractElementTypeInfo(tt.type());
@@ -1676,7 +1683,7 @@ public class A2GListener extends ASNBaseListener {
       // Tag mode defaults to module tag mode or explicit, leave to higher level impl to sort this out!
       result = [elementCat:'builtin',
                 elementType:'tagged',
-                tag: [tag_class_number:tt.tag().tagClassNumber().NUMBER(), tag_class: tc],
+                tag: [tag_class_number: Integer.parseInt(tt.tag().tagClassNumber().NUMBER().toString()), tag_class: tc],
                 type: type_info,
                 tagMode : tt.IMPLICIT_LITERAL() ? 'IMPLICIT' : ( tt.EXPLICIT_LITERAL() ? 'EXPLICIT' : null ) ]
     }

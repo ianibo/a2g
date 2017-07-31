@@ -16,20 +16,13 @@ EXTERNAL ::= [UNIVERSAL 8] IMPLICIT SEQUENCE {
 }
 
 
-NumericString ::= [UNIVERSAL 18 ] STRING
-
-PrintableString ::= [UNIVERSAL 19 ] STRING
-
-TeletexString ::= [UNIVERSAL 20 ] STRING
-
-VideotexString  ::= [UNIVERSAL 21 ] STRING
-
-VisibleString ::= [UNIVERSAL 26 ] STRING
-
-IA5String ::= [UNIVERSAL 22 ] STRING
-
-GraphicString ::= [UNIVERSAL 25 ] STRING
-
-GeneralString ::= [UNIVERSAL 27 ] STRING
+-- NumericString ::= [UNIVERSAL 18] IMPLICIT STRING
+-- PrintableString ::= [UNIVERSAL 19] IMPLICIT STRING
+-- TeletexString ::= [UNIVERSAL 20] IMPLICIT STRING
+-- VideotexString  ::= [UNIVERSAL 21] IMPLICIT STRING
+-- VisibleString ::= [UNIVERSAL 26] IMPLICIT STRING
+-- IA5String ::= [UNIVERSAL 22] IMPLICIT STRING
+-- GraphicString ::= [UNIVERSAL 25] IMPLICIT STRING
+-- GeneralString ::= [UNIVERSAL 27] IMPLICIT STRING
 
 END
