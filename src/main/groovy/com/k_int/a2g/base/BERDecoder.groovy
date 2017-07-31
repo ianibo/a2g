@@ -1,8 +1,11 @@
 package com.k_int.a2g.base;
 
 import com.k_int.a2g.base.Constants;
+import java.util.Stack;
 
 public class BERDecoder extends BaseDecoder {
+
+  private Stack encoding_info = new Stack();
 
   /**
    *

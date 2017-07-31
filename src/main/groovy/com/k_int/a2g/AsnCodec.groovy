@@ -5,6 +5,8 @@ import groovy.util.logging.*
 import org.antlr.v4.runtime.*;
 import com.k_int.a2g.antlr.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import com.k_int.a2g.base.BaseDecoder;
+import com.k_int.a2g.base.TagAndLength;
 
 @Log4j2
 public class AsnCodec {
@@ -71,7 +73,66 @@ public class AsnCodec {
     result;
   }
 
-  private encode(String specification,String type, Map data, ByteArrayOutputStream baos) {
+  private encode(String specification, String type, Map data, ByteArrayOutputStream baos) {
   }
 
+  public Map decode(String specification, String type, InputStream is, BaseDecoder decoder) {
+    log.debug("decode(${specification},${type},is,dec)");
+    def spec_defn = definitions[specification]
+
+    if ( spec_defn ) {
+      log.debug("Resolved specification ${specification}");
+      def type_defn = spec_defn.typemap[type]
+
+      if ( type_defn ) {
+        log.debug("Resolved type ${type}");
+
+        // Lets read the first tag and length from the input stream, and then decode the contents.
+        TagAndLength tal = decoder.readNextTagAndLength(is)
+
+        // Now decode the contents
+        processContents(tal,specification,type_defn,is,decoder);
+      }
+      else {
+        log.error("Unable to resolve type ${type} in specification ${specification}. Known types: ${spec_defn.keySet()}");
+      }
+    }
+    else {
+      log.error("Unable to resolve specification ${specification}. Currently know: ${definitions.keySet()}");
+    }
+  }
+
+  private Object processContents(TagAndLength tal, String specification,Map type_defn,InputStream is, BaseDecoder decoder) {
+    Object result = null;
+    switch ( type_defn.type ) {
+      case 'CHOICE':
+        result = decodeChoice(tal, specification, type_defn, is, decoder);
+        break;
+      default:
+        throw new RuntimeException("Unhandled ASN.1 type ${type_defn.type}");
+    }
+    return result;
+  }
+
+  /**
+   *  We map choice elements to a map containing 1 member which is the name of the choice
+   */
+  private decodeChoice(TagAndLength tal, String specification, Map type_defn,InputStream is, BaseDecoder decoder) {
+    log.debug("Decode choice");
+    def result = [:]
+    // The encoding of a choice type is the same as the encoding of the selected alternative. TagAndLength therefore is the tagAndLength of the
+    // chosen alternative in this case. We must iterate through the possible choices until we find an alternative that matches the decoded tag
+    type_defn.members.each { choice_option ->
+      // See if the tagging of the encoded data matches this part of the specification
+      // ( choice_option.is_implicit ) {
+      if ( ( choice_option.tag_class = tal.tag_class ) && 
+           ( choice_option.tag_value == tal.tag_value) ) {
+        log.debug("Matched choice ${tal.tag_class} ${tal.tag_value} ${choice_option}");
+      }
+      else {
+      }
+    }
+
+    result;
+  }
 }
