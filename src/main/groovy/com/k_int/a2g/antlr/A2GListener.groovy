@@ -386,7 +386,23 @@ public class A2GListener extends ASNBaseListener {
               this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'choice'])
             }
             else if ( nt.type().builtinType().taggedType() ) {
-              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'tagged'])
+              def tt = nt.type().builtinType().taggedType();
+
+              def tc = null;
+              if ( tt.tag().tagClass() ) {
+                if ( tt.tag().tagClass().UNIVERSAL_LITERAL() ) tc = 'UNIVERSAL';
+                if ( tt.tag().tagClass().APPLICATION_LITERAL() ) tc = 'APPLICATION';
+                if ( tt.tag().tagClass().PRIVATE_LITERAL() ) tc = 'PRIVATE';
+              }
+
+              // Tag mode defaults to module tag mode or explicit, leave to higher level impl to sort this out!
+              this.current_assignment.members.add([elementName: nt.IDENTIFIER(), 
+                                                   elementCat:'builtin', 
+                                                   elementType:'tagged',
+                                                   tag: [tag_class_number:tt.tag().tagClassNumber().NUMBER(), tag_class: tc],
+                                                   type: tt.type(),  // tt.type().builtinType or tt.type().referencedType()
+                                                   tagMode : tt.IMPLICIT_LITERAL() ? 'IMPLICIT' : ( tt.EXPLICIT_LITERAL() ? 'EXPLICIT' : null ) ])
+
             }
             else if ( nt.type().builtinType().enumeratedType() ) {
               this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'enumerated'])
@@ -1610,6 +1626,22 @@ public class A2GListener extends ASNBaseListener {
     }
   }
 
+  public Map extractElementTypeInfo(tt) {
+
+    Map result = [:]
+
+    if ( tt.builtinType() ) {
+      result = extractBuiltinTypeInfo(tt.builtinType() )
+    }
+    else if ( tt.referencedType() ) {
+      result = [ elementCat:'defined', elementType: extractIdentifier(tt.referencedType().definedType().IDENTIFIER()) ]
+    }
+    else {
+      throw new RuntimeException("Unhandled element type");
+    }
+    return result;
+  }
+
   public Map extractBuiltinTypeInfo(bit) {
 
     def result = [:]
@@ -1624,7 +1656,24 @@ public class A2GListener extends ASNBaseListener {
       result = [elementCat:'builtin', elementType:'choice']
     }
     else if ( bit.taggedType() ) {
-      result = [elementCat:'builtin', elementType:'tagged']
+
+      def tt = bit.taggedType();
+
+      def tc = null;
+      if ( tt.tag().tagClass() ) {
+        if ( tt.tag().tagClass().UNIVERSAL_LITERAL() ) tc = 'UNIVERSAL';
+        if ( tt.tag().tagClass().APPLICATION_LITERAL() ) tc = 'APPLICATION';
+        if ( tt.tag().tagClass().PRIVATE_LITERAL() ) tc = 'PRIVATE';
+      }
+
+      def type_info = extractElementTypeInfo(tt.type());
+
+      // Tag mode defaults to module tag mode or explicit, leave to higher level impl to sort this out!
+      result = [elementCat:'builtin',
+                elementType:'tagged',
+                tag: [tag_class_number:tt.tag().tagClassNumber().NUMBER(), tag_class: tc],
+                type: type_info,
+                tagMode : tt.IMPLICIT_LITERAL() ? 'IMPLICIT' : ( tt.EXPLICIT_LITERAL() ? 'EXPLICIT' : null ) ]
     }
     else if ( bit.enumeratedType() ) {
       result = [elementCat:'builtin', elementType:'enumerated']
