@@ -10,7 +10,6 @@ class BERDumpSpec extends Specification {
 
   def "test BERDump"() {
     when:
-      com.k_int.a2g.base.BaseDecoder der_decoder = new com.k_int.a2g.base.DERDecoder();
 
       InputStream useful_definition_is = this.getClass().getResourceAsStream('/AsnUseful.asn')
       InputStream z3950_definition_is = this.getClass().getResourceAsStream('/z3950v3.asn')
@@ -30,7 +29,8 @@ class BERDumpSpec extends Specification {
       asn_codec.registerDefinitions(useful_definition_is)
       asn_codec.registerDefinitions(z3950_definition_is)
 
-      Map init_req = asn_codec.decode('Z39-50-APDU-1995','PDU',init_request_ber_is,der_decoder)
+      com.k_int.a2g.base.BaseDecoder der_decoder = new com.k_int.a2g.base.DERDecoder(init_request_ber_is);
+      Map init_req = asn_codec.decode('Z39-50-APDU-1995','PDU',der_decoder)
       
     expect:
       1==1

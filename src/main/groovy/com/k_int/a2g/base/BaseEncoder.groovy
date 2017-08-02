@@ -20,14 +20,13 @@ public abstract class BaseEncoder {
   /**
    *  @return number of bytes written
    */
-  public abstract long encodeLength(long length, java.io.OutputStream os);
+  public abstract long encodeLength(long length)
 
   public abstract long encodeTag(boolean is_constructed,
                                  int tag_class,
                                  int tag_number,
-                                 boolean is_optional,
-                                 java.io.OutputStream os) throws java.io.IOException;
+                                 boolean is_optional) throws java.io.IOException;
 
-  public abstract long encodeInteger(java.io.OutputStream os, Integer integer);
-  public abstract long encodeNull(java.io.OutputStream os);
+  public abstract long encodeInteger(Integer integer);
+  public abstract long encodeNull();
 }

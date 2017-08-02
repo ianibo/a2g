@@ -4,6 +4,12 @@ import com.k_int.a2g.base.Constants;
 
 public class DEREncoder extends BaseEncoder {
 
+  private OutputStream os;
+
+  public DEREncoder(OutputStream os) {
+    this.os = os;
+  }
+
   /**
    * For DER.
    * When the length is between 0 and 127, the short form of length must be used
@@ -13,7 +19,7 @@ public class DEREncoder extends BaseEncoder {
    *
    * @return number of bytes written
    */
-  public long encodeLength(long length, java.io.OutputStream os) {
+  public long encodeLength(long length) {
 
     if(length >= 128) { 
       byte num_length_octets;
@@ -27,15 +33,15 @@ public class DEREncoder extends BaseEncoder {
       else
          num_length_octets = 1;
 
-      os.write((int)(0x80 | num_length_octets));
+      this.write((int)(0x80 | num_length_octets));
 
       for(int j = (num_length_octets - 1) * 8; j >= 0; j -= 8)
-        os.write((int)length >> j);
+        this.write((int)length >> j);
 
       return num_length_octets;
     }
     else { 
-      os.write((int)length);
+      this.write((int)length);
       return 1;
     }
   }
@@ -43,8 +49,7 @@ public class DEREncoder extends BaseEncoder {
   public long encodeTag(boolean is_constructed,
                         int tag_class,
                         int tag_value,
-                        boolean is_optional,
-                        java.io.OutputStream os) throws java.io.IOException {
+                        boolean is_optional) throws java.io.IOException {
     int l = 0;
     int k = tag_class;
     if(is_constructed)
@@ -52,11 +57,11 @@ public class DEREncoder extends BaseEncoder {
 
     l=1
     if(tag_value < 31) { // We can encode in a single octet
-      os.write((int) ( k | tag_value ) );
+      this.write((int) ( k | tag_value ) );
     }
     else { // Multiple tag octets
         // In multiple length tags, first octet gives class & cons, bits 1-5 are all 1
-        os.write((int)(k | 0x1f));
+        this.write((int)(k | 0x1f));
 
         // Followed by the integer encoding of the tag, base 128
         l += encodeBase128Int(tag_value);
@@ -65,7 +70,7 @@ public class DEREncoder extends BaseEncoder {
     return l;
   }
 
-  private long encodeBase128Int(int value, java.io.OutputStream os) throws java.io.IOException {
+  private long encodeBase128Int(int value) throws java.io.IOException {
     int len = 0;
     byte[] enc = new byte[10];
     int pos = 0;
@@ -77,20 +82,28 @@ public class DEREncoder extends BaseEncoder {
     enc[pos] = (byte)value;
 
     for ( ;pos>=0;pos-- ) { 
-      os.write( (int) ( enc[pos] | ( pos == 0 ? 0 : 128 ) ) );
+      this.write( (int) ( enc[pos] | ( pos == 0 ? 0 : 128 ) ) );
       len++
     }
 
     return len;
   }
 
-  public long encodeInteger(java.io.OutputStream os, Integer integer) {
+  public long encodeInteger(Integer integer) {
   }
 
-  public long encodeNull(java.io.OutputStream os) {
-    long bytes_written = encodeTag(false, Constants.UNIVERSAL, Constants.NULL, false, os)
-    bytes_written += encodeLength(0,os);
+  public long encodeNull() {
+    long bytes_written = encodeTag(false, Constants.UNIVERSAL, Constants.NULL, false)
+    bytes_written += encodeLength(0);
     return bytes_written
   }
 
+
+  public void write(byte[] b, int off, int len) {
+    os.write(b,off,len);
+  }
+
+  public  write(int b) {
+    os.write(b);
+  }
 }

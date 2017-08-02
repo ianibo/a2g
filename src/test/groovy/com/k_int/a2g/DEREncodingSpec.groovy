@@ -9,15 +9,11 @@ import com.k_int.a2g.AsnCodec;
 class DEREncodingSpec extends Specification {
 
   def "test Length encoding"() {
-    when:
-      com.k_int.a2g.base.BaseEncoder der_encoder = new com.k_int.a2g.base.DEREncoder();
-      
-    then:
-      1==1
       
     expect:
       OutputStream os = new ByteArrayOutputStream();
-      der_encoder.encodeLength(lenval, os);
+      com.k_int.a2g.base.BaseEncoder der_encoder = new com.k_int.a2g.base.DEREncoder(os);
+      der_encoder.encodeLength(lenval);
       byte[] encoded_length = os.toByteArray();
       Arrays.equals(encoded_length, encoding)
 
@@ -37,13 +33,14 @@ class DEREncodingSpec extends Specification {
 
     when:
       OutputStream os = new ByteArrayOutputStream();
-      com.k_int.a2g.base.BaseEncoder der_encoder = new com.k_int.a2g.base.DEREncoder();
-      com.k_int.a2g.base.BaseDecoder der_decoder = new com.k_int.a2g.base.DERDecoder();
+      com.k_int.a2g.base.BaseEncoder der_encoder = new com.k_int.a2g.base.DEREncoder(os);
 
     then:
-      der_encoder.encodeNull(os)
+      der_encoder.encodeNull()
       byte[] encoded_null = os.toByteArray();
-      Object o = der_decoder.decodeNull(new java.io.ByteArrayInputStream(encoded_null));
+
+      com.k_int.a2g.base.BaseDecoder der_decoder = new com.k_int.a2g.base.DERDecoder(new java.io.ByteArrayInputStream(encoded_null));
+      Object o = der_decoder.decodeNull()
 
     expect:
       Arrays.equals(encoding,encoded_null); 

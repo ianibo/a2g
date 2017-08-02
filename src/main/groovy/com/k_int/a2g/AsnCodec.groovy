@@ -76,7 +76,7 @@ public class AsnCodec {
   private encode(String specification, String type, Map data, ByteArrayOutputStream baos) {
   }
 
-  public Map decode(String specification, String type, InputStream is, BaseDecoder decoder) {
+  public Map decode(String specification, String type, BaseDecoder decoder) {
     log.debug("decode(${specification},${type},is,dec)");
     def spec_defn = definitions[specification]
 
@@ -88,10 +88,10 @@ public class AsnCodec {
         log.debug("Resolved type ${type}");
 
         // Lets read the first tag and length from the input stream, and then decode the contents.
-        TagAndLength tal = decoder.readNextTagAndLength(is)
+        TagAndLength tal = decoder.readNextTagAndLength()
 
         // Now decode the contents
-        processContents(tal, spec_defn, type_defn, is, decoder);
+        processContents(tal, spec_defn, type_defn, decoder);
       }
       else {
         log.error("Unable to resolve type ${type} in specification ${specification}. Known types: ${spec_defn.keySet()}");
@@ -102,11 +102,11 @@ public class AsnCodec {
     }
   }
 
-  private Object processContents(TagAndLength tal, Map spec_defn, Map type_defn, InputStream is, BaseDecoder decoder) {
+  private Object processContents(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
     Object result = null;
     switch ( type_defn.type ) {
       case 'CHOICE':
-        result = decodeChoice(tal, spec_defn, type_defn, is, decoder);
+        result = decodeChoice(tal, spec_defn, type_defn, decoder);
         break;
       default:
         throw new RuntimeException("Unhandled ASN.1 type ${type_defn.type}");
@@ -117,7 +117,7 @@ public class AsnCodec {
   /**
    *  We map choice elements to a map containing 1 member which is the name of the choice
    */
-  private decodeChoice(TagAndLength tal, Map spec_defn, Map type_defn,InputStream is, BaseDecoder decoder) {
+  private decodeChoice(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
     log.debug("Decode choice ${tal.tag_class} ${tal.tag_value}");
     def result = [:]
 

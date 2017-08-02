@@ -17,16 +17,15 @@ package com.k_int.a2g.base;
  */
 public abstract class BaseDecoder {
 
-  public abstract long decodeLength(java.io.InputStream os);
+  public abstract long decodeLength();
 
   public abstract int decodeTag(boolean is_constructed,
                                 int tag_class,
                                 int tag_number,
-                                boolean is_optional,
-                                java.io.InputStream is) throws java.io.IOException;
+                                boolean is_optional) throws java.io.IOException;
 
-  public abstract Integer decodeInteger(java.io.InputStream is);
+  public abstract Integer decodeInteger();
 
-  public abstract Object decodeNull(java.io.InputStream is);
+  public abstract Object decodeNull();
 
 }

@@ -5,17 +5,23 @@ import java.util.Stack;
 
 public class BERDecoder extends BaseDecoder {
 
+  private InputStream is;
+
+  public BERDecoder(InputStream is) {
+    this.is = is;
+  }
+
   private Stack encoding_info = new Stack();
 
   /**
    *
    * return encoded length, -1 is indefinite length encoding
    */
-  public long decodeLength(java.io.InputStream is) {
+  public long decodeLength() {
     long datalen;
     boolean next_is_indefinite;
 
-    byte lenpart = (byte)is.read();
+    byte lenpart = (byte)this.read();
 
     if ((lenpart & 0x80) == 0)  { // If bit 8 is 0
       // Single octet length encoding
@@ -31,7 +37,7 @@ public class BERDecoder extends BaseDecoder {
 
       datalen = 0;
       while (lenpart-- > 0)
-        datalen = (datalen << 8) | ((byte)is.read() & 0xFF);
+        datalen = (datalen << 8) | ((byte)this.read() & 0xFF);
     }
 
     return datalen;
@@ -40,44 +46,24 @@ public class BERDecoder extends BaseDecoder {
   public int decodeTag(boolean is_constructed,
                        int tag_class,
                        int tag_value,
-                       boolean is_optional,
-                       java.io.InputStream is) throws java.io.IOException {
+                       boolean is_optional) throws java.io.IOException {
     return 0;
   }
 
-  private long encodeBase128Int(int value, java.io.OutputStream os) throws java.io.IOException {
-    int len = 0;
-    byte[] enc = new byte[10];
-    int pos = 0;
-
-    while ( ( value > 127 ) && ( pos < 9 ) ) { 
-      enc[pos++] = (byte) ( value & 127 );
-      value = value >> 7;
-    }
-    enc[pos] = (byte)value;
-
-    for ( ;pos>=0;pos-- ) { 
-      os.write( (int) ( enc[pos] | ( pos == 0 ? 0 : 128 ) ) );
-      len++
-    }
-
-    return len;
-  }
-
-  public Integer decodeInteger(java.io.InputStream is) {
+  public Integer decodeInteger() {
   }
   
-  public Object decodeNull(java.io.InputStream is) {
-    int tag = decodeTag(false, Constants.UNIVERSAL, Constants.NULL, false, is)
-    long length = decodeLength(is);
+  public Object decodeNull() {
+    int tag = decodeTag(false, Constants.UNIVERSAL, Constants.NULL, false)
+    long length = decodeLength();
     return null;
   }
 
-  public TagAndLength readNextTagAndLength(InputStream is) throws java.io.IOException {
+  public TagAndLength readNextTagAndLength() throws java.io.IOException {
 
     TagAndLength result = new TagAndLength();
 
-    byte c = (byte)is.read();
+    byte c = (byte)this.read();
     if ( c == -1 ) {
       return null;
     }
@@ -95,7 +81,7 @@ public class BERDecoder extends BaseDecoder {
       // Groovy has no do-while :((
       boolean cont=true;
       while ( cont ) {
-        c = (byte)is.read();
+        c = (byte)this.read();
 
         // Shift value 7 bits left
         result.tag_value = result.tag_value << 7;
@@ -106,9 +92,12 @@ public class BERDecoder extends BaseDecoder {
       }
     }
 
-    result.length = decodeLength(is);
+    result.length = decodeLength();
 
     return result
   }
 
+  public int read() {
+    return is.read();
+  }
 }
