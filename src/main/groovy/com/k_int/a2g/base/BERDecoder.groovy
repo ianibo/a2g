@@ -6,12 +6,11 @@ import java.util.Stack;
 public class BERDecoder extends BaseDecoder {
 
   private InputStream is;
+  private Stack<TagAndLength> encoding_stack = new Stack();
 
   public BERDecoder(InputStream is) {
     this.is = is;
   }
-
-  private Stack encoding_info = new Stack();
 
   /**
    *
@@ -94,10 +93,24 @@ public class BERDecoder extends BaseDecoder {
 
     result.length = decodeLength();
 
+    if ( ( result.length == 0 ) && 
+         ( result.tag_value == 0 ) ) {
+      // Possible 00 - end of indefinite length encoding marker - check the stack and mark appropriately if so
+      // if ( encoding_stack.peek().is_indefinite_length ) { }
+    }
+
     return result
   }
 
   public int read() {
-    return is.read();
+    
+    int result = is.read();
+    if ( ( result >= 0 ) && ( !encoding_stack.empty() ) ) {
+      encoding_stack.peek().bytes_read++
+    }
+
+    return result;
   }
+
+
 }
