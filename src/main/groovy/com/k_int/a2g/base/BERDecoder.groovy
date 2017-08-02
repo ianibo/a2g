@@ -112,5 +112,32 @@ public class BERDecoder extends BaseDecoder {
     return result;
   }
 
+  public void beginConstructed(TagAndLength tal) {
+    encoding_stack.push(tal)
+  }
+
+  public void endConstructed() {
+    // Pop off the top of the stack
+    TagAndLength tal = encoding_stack.pop()
+
+    // If we're a part of a larger constructed encoding
+    if ( !encoding_stack.empty() ) {
+      // Add the bytes we read in processing the constructed type onto the bytes read for the container
+      encoding_stack.peek().bytes_read += tal.bytes_read;
+    }
+  }
+
+  public boolean moreContents() {
+    boolean result = false;
+    if ( !encoding_stack.empty() ) {
+      TagAndLength tal = encoding_stack.peek()
+      if ( tal.is_indefinite_length ) {
+      }
+      else {
+        result = ( tal.bytes_read <= tal.length )
+      }
+    }
+    return result;
+  }
 
 }

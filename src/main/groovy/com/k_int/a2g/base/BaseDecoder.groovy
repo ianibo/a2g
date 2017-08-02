@@ -28,4 +28,7 @@ public abstract class BaseDecoder {
 
   public abstract Object decodeNull();
 
+  public abstract void beginConstructed(TagAndLength tal);
+  public abstract void endConstructed();
+  public abstract boolean moreContents();
 }

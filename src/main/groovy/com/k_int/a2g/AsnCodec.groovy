@@ -108,6 +108,9 @@ public class AsnCodec {
       case 'CHOICE':
         result = decodeChoice(tal, spec_defn, type_defn, decoder);
         break;
+      case 'SEQUENCE':
+        result = decodeSequence(tal, spec_defn, type_defn, decoder);
+        break;
       default:
         throw new RuntimeException("Unhandled ASN.1 type ${type_defn.type}");
     }
@@ -132,6 +135,7 @@ public class AsnCodec {
       if ( ( (choice_option.tag.tag_class?:128) == tal.tag_class ) && 
            ( choice_option.tag.tag_class_number == tal.tag_value) ) {
         log.debug("Matched choice ${tal.tag_class} ${tal.tag_value} ${choice_option}");
+        // Call processContents with the type definition we looked up from our decoding info
       }
       else {
         log.debug("Not ${choice_option} for ${tal.tag_class} ${tal.tag_value}");
@@ -139,5 +143,14 @@ public class AsnCodec {
     }
 
     result;
+  }
+
+  private decodeSequence(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
+    decoder.beginConstructed(tal)
+    while ( decoder.moreContents() ) {
+      TagAndLength content_tal = decoder.readNextTagAndLength()
+      // processContents(tal,spec_defn,type_defn,decoder);
+    }
+    decoder.endConstructed()
   }
 }
