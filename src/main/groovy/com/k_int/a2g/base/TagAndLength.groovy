@@ -9,6 +9,7 @@ public class TagAndLength {
   public int tag_class
   public int tag_value
   public long length
+  public long bytes_read
   public boolean is_indefinite_length=false
 
   public String toString() {

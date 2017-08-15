@@ -6,12 +6,11 @@ import java.util.Stack;
 public class BERDecoder extends BaseDecoder {
 
   private InputStream is;
+  private Stack<TagAndLength> encoding_stack = new Stack();
 
   public BERDecoder(InputStream is) {
     this.is = is;
   }
-
-  private Stack encoding_info = new Stack();
 
   /**
    *
@@ -94,10 +93,51 @@ public class BERDecoder extends BaseDecoder {
 
     result.length = decodeLength();
 
+    if ( ( result.length == 0 ) && 
+         ( result.tag_value == 0 ) ) {
+      // Possible 00 - end of indefinite length encoding marker - check the stack and mark appropriately if so
+      // if ( encoding_stack.peek().is_indefinite_length ) { }
+    }
+
     return result
   }
 
   public int read() {
-    return is.read();
+    
+    int result = is.read();
+    if ( ( result >= 0 ) && ( !encoding_stack.empty() ) ) {
+      encoding_stack.peek().bytes_read++
+    }
+
+    return result;
   }
+
+  public void beginConstructed(TagAndLength tal) {
+    encoding_stack.push(tal)
+  }
+
+  public void endConstructed() {
+    // Pop off the top of the stack
+    TagAndLength tal = encoding_stack.pop()
+
+    // If we're a part of a larger constructed encoding
+    if ( !encoding_stack.empty() ) {
+      // Add the bytes we read in processing the constructed type onto the bytes read for the container
+      encoding_stack.peek().bytes_read += tal.bytes_read;
+    }
+  }
+
+  public boolean moreContents() {
+    boolean result = false;
+    if ( !encoding_stack.empty() ) {
+      TagAndLength tal = encoding_stack.peek()
+      if ( tal.is_indefinite_length ) {
+      }
+      else {
+        result = ( tal.bytes_read <= tal.length )
+      }
+    }
+    return result;
+  }
+
 }
