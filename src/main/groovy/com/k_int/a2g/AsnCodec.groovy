@@ -79,9 +79,29 @@ public class AsnCodec {
   public Map decode(String specification, String type, BaseDecoder decoder) {
     log.debug("decode(${specification},${type},is,dec)");
     def spec_defn = definitions[specification]
-
     if ( spec_defn ) {
       log.debug("Resolved specification ${specification}");
+      return decode(spec_defn,type,decoder);
+    }
+    else {
+      throw new RuntimeException("Unable to look up type ${type} in specification ${specification}");
+    }
+  }
+
+  /**
+   * decode - decode a specified type from the input stream
+   * @param spec_defn - the parsed ASN.1 specification as a set of map objects -- EG the parsed z39.50 specification, or the parsed ISO10161 specification
+   * @param type - the name of the type we want to decode from that specification -- EG InitRequest from the z3950-1993 specification
+   * @param decoder - our wrapped input stream that knows about BER constructed types and the decoding stack
+   * 
+   * This method is our primary entry point for decoding an octet-stream. Streams are always composed of <TAG> <LENGTH> <ContentOctets> so
+   * this method reads the leading tag and length, and then delegates the processing of the contents to a later function.
+   */
+  public Map decode(Map spec_defn, String type, BaseDecoder decoder) {
+
+    def result = null;
+
+    if ( spec_defn ) {
       def type_defn = spec_defn.typemap[type]
 
       if ( type_defn ) {
@@ -91,7 +111,7 @@ public class AsnCodec {
         TagAndLength tal = decoder.readNextTagAndLength()
 
         // Now decode the contents
-        processContents(tal, spec_defn, type_defn, decoder);
+        result = processContents(tal, spec_defn, type_defn, decoder);
       }
       else {
         log.error("Unable to resolve type ${type} in specification ${specification}. Known types: ${spec_defn.keySet()}");
@@ -100,18 +120,32 @@ public class AsnCodec {
     else {
       log.error("Unable to resolve specification ${specification}. Currently know: ${definitions.keySet()}");
     }
+
+    result
   }
 
+  /**
+   * process the contents of a given constructed encoding.
+   * We have read a tag and length from the input stream which has allowed us to look up a type declaration.
+   * we now need to decode the content octets based upon the type
+   */
   private Object processContents(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
     Object result = null;
-    switch ( type_defn.type ) {
+    // getBaseType currently just returns type_defn.type but I suspect we might need to do something more
+    // involved in some implicit tagging cases, so the lookup of a base type (SEQUENCE,CHOICE,etc) for a given type is
+    // broken out into a function here to avoid pain later on.
+    switch ( getBaseType(type_defn) ) {
       case 'CHOICE':
         result = decodeChoice(tal, spec_defn, type_defn, decoder);
         break;
       default:
-        throw new RuntimeException("Unhandled ASN.1 type ${type_defn.type}");
+        throw new RuntimeException("Unhandled ASN.1 type ${type_defn.type} definition ${type_defn}");
     }
     return result;
+  }
+
+  private getBaseType(type_definition) {
+    return type_definition.type;
   }
 
   /**
@@ -132,9 +166,13 @@ public class AsnCodec {
       if ( ( (choice_option.tag.tag_class?:128) == tal.tag_class ) && 
            ( choice_option.tag.tag_class_number == tal.tag_value) ) {
         log.debug("Matched choice ${tal.tag_class} ${tal.tag_value} ${choice_option}");
+
+        // The choice_option defintion looks like this::
+        // [elementCat:builtin, elementType:tagged, tag:[tag_class_number:20, tag_class:128], type:[elementCat:defined, elementType:InitializeRequest], tagMode:IMPLICIT, elementName:initRequest]
+        result = this.decode(spec_defn, choice_option.type.elementType, decoder);
       }
       else {
-        log.debug("Not ${choice_option} for ${tal.tag_class} ${tal.tag_value}");
+        // log.debug("Not ${choice_option} for ${tal.tag_class} ${tal.tag_value}");
       }
     }
 
