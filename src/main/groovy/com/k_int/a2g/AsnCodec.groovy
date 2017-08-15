@@ -156,6 +156,8 @@ public class AsnCodec {
    */
   private decodeChoice(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
     log.debug("Decode choice ${tal.tag_class} ${tal.tag_value}");
+
+    // The choice will decode to a map with 1 element, which corresponds to the selected type.
     def result = [:]
 
     // The encoding of a choice type is the same as the encoding of the selected alternative. TagAndLength therefore is the tagAndLength of the
@@ -171,7 +173,9 @@ public class AsnCodec {
         log.debug("Matched choice ${tal.tag_class} ${tal.tag_value} ${choice_option}");
         // The choice_option defintion looks like this::
         // [elementCat:builtin, elementType:tagged, tag:[tag_class_number:20, tag_class:128], type:[elementCat:defined, elementType:InitializeRequest], tagMode:IMPLICIT, elementName:initRequest]
-        result = this.decode(spec_defn, choice_option.type.elementType, decoder);
+
+        // The choice will always decode to a map with 1 element, which corresponds to the selected type.
+        result[choice_option.elementName] = this.decode(spec_defn, choice_option.type.elementType, decoder);
       }
       else {
         // log.debug("Not ${choice_option} for ${tal.tag_class} ${tal.tag_value}");
@@ -186,6 +190,7 @@ public class AsnCodec {
     while ( decoder.moreContents() ) {
       TagAndLength content_tal = decoder.readNextTagAndLength()
       // processContents(tal,spec_defn,type_defn,decoder);
+      throw new RuntimeException("decode sequence implementation is incomplete");
     }
     decoder.endConstructed()
   }

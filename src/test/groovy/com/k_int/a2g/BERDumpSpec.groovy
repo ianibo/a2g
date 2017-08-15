@@ -33,6 +33,8 @@ class BERDumpSpec extends Specification {
       Map init_req = asn_codec.decode('Z39-50-APDU-1995','PDU',der_decoder)
       
     expect:
+      // init_req should be a map containing 1 element initRequest which is the choice element for the init request APDU
+      println(init_req);
       1==1
   }
 
