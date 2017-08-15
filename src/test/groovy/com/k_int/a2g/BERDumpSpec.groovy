@@ -35,7 +35,7 @@ class BERDumpSpec extends Specification {
     expect:
       // init_req should be a map containing 1 element initRequest which is the choice element for the init request APDU
       println(init_req);
-      1==1
+      init_req.containsKey('initRequest');
   }
 
 }
