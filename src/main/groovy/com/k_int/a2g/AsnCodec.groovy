@@ -190,22 +190,37 @@ public class AsnCodec {
   private decodeSequence(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
     decoder.beginConstructed(tal)
 
-    log.debug("Decode a sequene with definition ${type_defn} - we need to keep a cursor on the type in sync with the contents of the constructed encoding");
+    log.debug("Decode a sequene with definition ${type_defn}");
 
-    // Iterate through type_defn.members
-    Iterator i = type_defn.members.iterator()
+    // First tag in constructed octets comprising this sequence.
+    TagAndLength content_tal = decoder.readNextTagAndLength()
+    log.debug("Next tag and length is ${content_tal}");
 
-    while ( decoder.moreContents() ) {
-      TagAndLength content_tal = decoder.readNextTagAndLength()
-      log.debug("Next tag and length is ${content_tal}");
-      // See if we can look up the tag in the sequence map - optional elements may be skipped over
-      // processContents(tal,spec_defn,type_defn,decoder);
+    type_defn.members.each { member_defn ->
 
-      // If the current position in type_defn.members matches the tag then process that match.
-      // If they dont match, but the member is mandatory, throw an exception, otherwise move to the next iterable position and repeat.
+      // We need to work out what tag will correspond to the type of member_defn
 
-      throw new RuntimeException("decode sequence implementation is incomplete");
+      log.debug("Consider the following member ${member_defn}");
+
+      if ( ( (member_defn.tag.tag_class?:128) == content_tal.tag_class ) &&
+           ( member_defn.tag.tag_class_number == content_tal.tag_value) ) {
+        log.debug("Matched tag");
+        // Decode the contents for this tagged element.
+      }
+      else {
+        // If the member was mandatory throw an exception
+      }
+
     }
+
+    if ( decoder.moreContents() ) {
+      throw new RuntimeException("Reached end of sequence definition, but there are still contents octets");
+    }
+    else {
+      // All tidy -- we've reached the end of the type declaration for the sequence and there are no contents
+      // octets remaining for this constructed type.
+    }
+
     decoder.endConstructed()
   }
 }
