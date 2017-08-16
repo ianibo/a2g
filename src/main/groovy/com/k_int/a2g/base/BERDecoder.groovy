@@ -112,6 +112,14 @@ public class BERDecoder extends BaseDecoder {
     return result;
   }
 
+  public void mark(int i) {
+    is.mark(5)
+  }
+
+  public void reset() {
+    is.reset();
+  }
+
   public void beginConstructed(TagAndLength tal) {
     encoding_stack.push(tal)
   }
@@ -134,9 +142,9 @@ public class BERDecoder extends BaseDecoder {
 
       if ( tal.is_indefinite_length ) {
         // See if we can read the 00 terminating octets for an indefinite length encoding
-        is.mark(5);
-        int i1 = is.read();
-        int i2 = is.read();
+        this.mark(5);
+        int i1 = this.read();
+        int i2 = this.read();
         if ( ( i1 == 0 ) && ( i2 == 0 ) ) {
           // debug("MoreData... false ( Next octets are 00 )");
           // csi.bytes_processed += 2;
@@ -144,7 +152,8 @@ public class BERDecoder extends BaseDecoder {
         }
         else {
           // The two octets weren't 00 - so reset the stream
-          is.reset();
+          result = true;
+          this.reset();
         }
 
         log.debug("moreContents() - stack size is ${encoding_stack.size()} read=${tal.bytes_read} length=${tal.length} (Indefinite) result=${result}");
