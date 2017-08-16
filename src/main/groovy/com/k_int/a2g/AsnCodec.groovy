@@ -205,11 +205,12 @@ public class AsnCodec {
 
       // We need to work out what tag will correspond to the type of member_defn
       // If the member is a defined type with no explicit tagging, we need to work out what tag to expect for the defined type
+      Tag expected_tag = getTagForConstructedMember(member_defn)
 
       log.debug("Consider the following member ${member_defn}");
 
-      if ( ( (member_defn.tag.tag_class?:128) == content_tal.tag_class ) &&
-           ( member_defn.tag.tag_class_number == content_tal.tag_value) ) {
+      if ( ( (expected_tag.tag_class?:128) == content_tal.tag_class ) &&
+           ( expected_tag.tag_class_number == content_tal.tag_value) ) {
         log.debug("Matched tag");
         // Decode the contents for this tagged element.
       }
@@ -228,5 +229,19 @@ public class AsnCodec {
     }
 
     decoder.endConstructed()
+  }
+
+  /**
+   * This method takes a member of a constructed type (Sequence or Choice currently) and works out what tag we should be
+   * looking out for in the octet stream.
+   * Examples are:
+   *  referenceId        ReferenceId OPTIONAL,
+   *  protocolVersion      ProtocolVersion,
+   *  options        Options,
+   *  preferredMessageSize  [5]  IMPLICIT INTEGER,
+   *
+   */
+  private Tag getTagForConstructedMember(member_defn) {
+    // This
   }
 }
