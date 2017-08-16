@@ -149,6 +149,7 @@ public class AsnCodec {
     decoder.beginConstructed(tal)
     while ( decoder.moreContents() ) {
       TagAndLength content_tal = decoder.readNextTagAndLength()
+      // See if we can look up the tag in the sequence map - optional elements may be skipped over
       // processContents(tal,spec_defn,type_defn,decoder);
     }
     decoder.endConstructed()
