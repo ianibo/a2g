@@ -7,6 +7,7 @@ import com.k_int.a2g.antlr.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import com.k_int.a2g.base.BaseDecoder;
 import com.k_int.a2g.base.TagAndLength;
+import com.k_int.a2g.base.Tag;
 
 @Log4j2
 public class AsnCodec {
@@ -243,5 +244,6 @@ public class AsnCodec {
    */
   private Tag getTagForConstructedMember(member_defn) {
     // This
+    return null;
   }
 }
