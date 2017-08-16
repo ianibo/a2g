@@ -136,7 +136,7 @@ public class AsnCodec {
     // broken out into a function here to avoid pain later on.
     log.debug("processContents(${tal}...)");
 
-    switch ( getBaseType(type_defn) ) {
+    switch ( getBaseType(spec_defn,type_defn) ) {
       case 'CHOICE':
         result = decodeChoice(tal, spec_defn, type_defn, decoder);
         break;
@@ -149,7 +149,12 @@ public class AsnCodec {
     return result;
   }
 
-  private getBaseType(type_definition) {
+  private getBaseType(spec_defn, type_definition) {
+    if ( type_definition.elementCat == 'defined' ) {
+      // The type is defined elsewhere in the file, so we need to get the base type from that definition
+      result = type_definition.elementType
+    }
+
     return type_definition.type;
   }
 
@@ -199,6 +204,7 @@ public class AsnCodec {
     type_defn.members.each { member_defn ->
 
       // We need to work out what tag will correspond to the type of member_defn
+      // If the member is a defined type with no explicit tagging, we need to work out what tag to expect for the defined type
 
       log.debug("Consider the following member ${member_defn}");
 
