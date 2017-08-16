@@ -2,7 +2,10 @@ package com.k_int.a2g.base;
 
 import com.k_int.a2g.base.Constants;
 import java.util.Stack;
+import org.apache.log4j.*
+import groovy.util.logging.*
 
+@Log4j2
 public class BERDecoder extends BaseDecoder {
 
   private InputStream is;

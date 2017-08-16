@@ -134,6 +134,8 @@ public class AsnCodec {
     // getBaseType currently just returns type_defn.type but I suspect we might need to do something more
     // involved in some implicit tagging cases, so the lookup of a base type (SEQUENCE,CHOICE,etc) for a given type is
     // broken out into a function here to avoid pain later on.
+    log.debug("processContents(${tal}...)");
+
     switch ( getBaseType(type_defn) ) {
       case 'CHOICE':
         result = decodeChoice(tal, spec_defn, type_defn, decoder);
@@ -187,10 +189,21 @@ public class AsnCodec {
 
   private decodeSequence(TagAndLength tal, Map spec_defn, Map type_defn, BaseDecoder decoder) {
     decoder.beginConstructed(tal)
+
+    log.debug("Decode a sequene with definition ${type_defn} - we need to keep a cursor on the type in sync with the contents of the constructed encoding");
+
+    // Iterate through type_defn.members
+    Iterator i = type_defn.members.iterator()
+
     while ( decoder.moreContents() ) {
       TagAndLength content_tal = decoder.readNextTagAndLength()
+      log.debug("Next tag and length is ${content_tal}");
       // See if we can look up the tag in the sequence map - optional elements may be skipped over
       // processContents(tal,spec_defn,type_defn,decoder);
+
+      // If the current position in type_defn.members matches the tag then process that match.
+      // If they dont match, but the member is mandatory, throw an exception, otherwise move to the next iterable position and repeat.
+
       throw new RuntimeException("decode sequence implementation is incomplete");
     }
     decoder.endConstructed()
