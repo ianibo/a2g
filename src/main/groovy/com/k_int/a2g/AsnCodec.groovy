@@ -59,6 +59,10 @@ public class AsnCodec {
     log.debug(definitions);
   }
 
+  /**
+   * See if we can find a protocol definition for the given input string -- for example the 'AsnUseful' definitions, or 'Z39-50-APDU-1995'.
+   * Once looked up, the resulting object has a .typemap that can be used to look up type definitions within that sepecification.
+   */
   public Map getDefinition(String definition_id) {
     return definitions[definition_id]
   }
@@ -206,7 +210,8 @@ public class AsnCodec {
 
       // We need to work out what tag will correspond to the type of member_defn
       // If the member is a defined type with no explicit tagging, we need to work out what tag to expect for the defined type
-      Tag expected_tag = getTagForConstructedMember(member_defn)
+      Tag expected_tag = getTagForConstructedMember(spec_defn, member_defn)
+      assert( expected_tag != null );
 
       log.debug("Consider the following member ${member_defn}");
 
@@ -242,8 +247,40 @@ public class AsnCodec {
    *  preferredMessageSize  [5]  IMPLICIT INTEGER,
    *
    */
-  private Tag getTagForConstructedMember(member_defn) {
+  private Tag getTagForConstructedMember(spec_defn,member_defn) {
+    Tag result = null;
     // This
-    return null;
+    switch ( member_defn.elementCat ) {
+      case 'builtin' :
+        switch ( member_defn.elementType ) {
+          case 'tagged':
+            result = new Tag(member_defn.tag.tag_class, member_defn.tag.tag_class_number)
+            break;
+          default:
+            throw new RuntimeException("Unhandled constructed member type (${member_defn.elementType}) in builtin category");
+        }
+        break;
+
+      case 'defined' :
+        // The member is defined by some other type in this specification see if we can look that up
+        def typedef_for_member = spec_defn.typemap[member_defn.elementType]
+        if ( typedef_for_member == null ) {
+          throw new RuntimeException("Failed to resolve type ${member_defn.elementType}. Current definitions contain ${spec_defn.typemap.keySet()}");
+        }
+        else {
+          log.debug("Worked out that the member is of a defined type ${member_defn.elementType} with defn ${typedef_for_member} - now work out the tag");
+          if ( typedef_for_member.size() == 0 ) {
+            throw new RuntimeException("Found a typemap entry for ${member_defn.elementType} but the entry is blank. This means more work is needed to extract the type information from the ASN definition.. and that the implementation is incomplete");
+          }
+        }
+        throw new RuntimeException("Incomplete getTagForConstructedMember implementation for defined member");
+        break;
+
+      default:
+        throw new RuntimeException('Unhandled constructed member category');
+    }
+
+    log.debug("Result of getTagForConstructedMember: ${result}");
+    return result;
   }
 }
