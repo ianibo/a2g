@@ -279,6 +279,7 @@ public class A2GListener extends ASNBaseListener {
    */
   @Override public void exitAssignment(ASNParser.AssignmentContext ctx) { 
     def type_identifier = ctx.IDENTIFIER().getText()
+    log.debug(ctx);
     log.debug("EXIT ASSIGNMENT -> Adding definition for ${type_identifier} ${type_identifier.class.name} to this definitions typemap");
     this.typemap[type_identifier] = this.current_assignment
     this.current_assignment = null;
@@ -386,6 +387,7 @@ public class A2GListener extends ASNBaseListener {
               this.current_assignment.members.add([elementName: nt.IDENTIFIER(), elementCat:'builtin', elementType:'choice'])
             }
             else if ( nt.type().builtinType().taggedType() ) {
+              log.debug("componentType::tagged type");
               def tt = nt.type().builtinType().taggedType();
 
               def tc = null;
@@ -1176,43 +1178,62 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterTypeAssignment(ASNParser.TypeAssignmentContext ctx) { }
+  @Override public void enterTypeAssignment(ASNParser.TypeAssignmentContext ctx) { 
+    log.debug("enterTypeAssignment");
+  }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void exitTypeAssignment(ASNParser.TypeAssignmentContext ctx) { }
+  @Override public void exitTypeAssignment(ASNParser.TypeAssignmentContext ctx) { 
+    log.debug("exitTypeAssignment");
+  }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterValueAssignment(ASNParser.ValueAssignmentContext ctx) { }
+  @Override public void enterValueAssignment(ASNParser.ValueAssignmentContext ctx) { 
+    log.debug("enterValueAssignment");
+  }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitValueAssignment(ASNParser.ValueAssignmentContext ctx) { 
-    // log.debug("A2GListener::exitValueAssignment");
+    log.debug("A2GListener::exitValueAssignment");
   }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
   @Override public void enterType(ASNParser.TypeContext ctx) { }
+
   /**
    * {@inheritDoc}
    *
    * <p>The default implementation does nothing.</p>
    */
   @Override public void exitType(ASNParser.TypeContext ctx) { 
-    // log.debug("A2GListener::exitType");
-    // log.debug("    -> ${ctx.builtinType()}");
-    // log.debug("    -> ${ctx.referencedType()}");
-    // log.debug("    -> ${ctx.constraint()}");
+    log.debug("A2GListener::exitType");
+    if ( ctx.builtinType() != null ) {
+      log.debug("    -> BuiltinType");
+      log.debug("      -> octetString:${ctx.builtinType().octetStringType()}");
+    }
+
+    if ( ctx.referencedType() != null ) {
+      log.debug("    -> Referenced Type");
+      log.debug("      -> ${ctx.referencedType().definedType()}");
+    }
+
+    log.debug("    -> ${ctx.constraint()}");
   }
   /**
    * {@inheritDoc}
@@ -1653,6 +1674,8 @@ public class A2GListener extends ASNBaseListener {
 
   public Map extractBuiltinTypeInfo(bit) {
 
+    log.debug("extractBuiltinTypeInfo");
+
     def result = [:]
 
     if ( bit.octetStringType() ) {
@@ -1665,6 +1688,8 @@ public class A2GListener extends ASNBaseListener {
       result = [elementCat:'builtin', elementType:'choice']
     }
     else if ( bit.taggedType() ) {
+
+      log.debug("extractBuiltinTypeInfo componentType::tagged type");
 
       def tt = bit.taggedType();
 
