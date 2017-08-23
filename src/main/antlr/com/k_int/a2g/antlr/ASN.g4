@@ -370,10 +370,10 @@ valueAssignment :
 type : (builtinType | referencedType) (constraint)*
 ;
 builtinType :
-   octetStringType
+   taggedType
+ | octetStringType
  | bitStringType
  | choiceType
- | taggedType
  | enumeratedType
  | integerType
  | sequenceType

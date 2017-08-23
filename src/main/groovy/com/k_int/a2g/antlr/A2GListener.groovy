@@ -372,6 +372,7 @@ public class A2GListener extends ASNBaseListener {
    * <p>The default implementation does nothing.</p>
    */
   @Override public void enterComponentType(ASNParser.ComponentTypeContext ctx) { 
+    log.debug("enterComponentType");
     if ( ctx.namedType() ) {
       if ( this.current_assignment.members != null ) {
         def nt = ctx.namedType();
@@ -1180,6 +1181,9 @@ public class A2GListener extends ASNBaseListener {
    */
   @Override public void enterTypeAssignment(ASNParser.TypeAssignmentContext ctx) { 
     log.debug("enterTypeAssignment");
+    // ctx.ASSIGN_OP
+    // ctx.type
+    // ctx.type :: TypeContext
   }
 
   /**
@@ -1214,7 +1218,9 @@ public class A2GListener extends ASNBaseListener {
    *
    * <p>The default implementation does nothing.</p>
    */
-  @Override public void enterType(ASNParser.TypeContext ctx) { }
+  @Override public void enterType(ASNParser.TypeContext ctx) { 
+    log.debug("enterType");
+  }
 
   /**
    * {@inheritDoc}
@@ -1225,12 +1231,60 @@ public class A2GListener extends ASNBaseListener {
     log.debug("A2GListener::exitType");
     if ( ctx.builtinType() != null ) {
       log.debug("    -> BuiltinType");
-      log.debug("      -> octetString:${ctx.builtinType().octetStringType()}");
-    }
+      if ( ctx.builtinType().octetStringType() != null ) {
+        log.debug("      -> octetString literal:${ctx.builtinType().octetStringType().OCTET_LITERAL()}");
+        log.debug("      -> octetString String literal:${ctx.builtinType().octetStringType().STRING_LITERAL()}");
+      }
+      else if ( ctx.builtinType().taggedType() != null ) {
+        log.debug("      -> tagged type.....");
+      }
+      else if ( ctx.builtinType().bitStringType() != null ) {
+        log.debug("      -> bitString type.....");
+      }
+      else if ( ctx.builtinType().choiceType() != null ) {
+        log.debug("      -> choice type.....");
+      }
+      else if ( ctx.builtinType().enumeratedType() != null ) {
+        log.debug("      -> enum type.....");
+      }
+      else if ( ctx.builtinType().integerType() != null ) {
+        log.debug("      -> int type.....");
+      }
+      else if ( ctx.builtinType().sequenceType() != null ) {
+        log.debug("      -> seq type.....");
+      }
+      else if ( ctx.builtinType().sequenceOfType() != null ) {
+        log.debug("      -> seq of type.....");
+      }
+      else if ( ctx.builtinType().setType() != null ) {
+        log.debug("      -> set type.....");
+      }
+      else if ( ctx.builtinType().setOfType() != null ) {
+        log.debug("      -> set of type.....");
+      }
+      else if ( ctx.builtinType().objectidentifiertype() != null ) {
+        log.debug("      -> oid type.....");
+      }
+      else if ( ctx.builtinType().objectClassFieldType() != null ) {
+        log.debug("      -> object class field type.....");
+      }
+      else if ( ctx.builtinType().nullType() != null ) {
+        log.debug("      -> null type.....");
+      }
+      else if ( ctx.builtinType().booleanType() != null ) {
+        log.debug("      -> boolean type.....");
+      }
+      else {
+        throw new RuntimeException("Unable to work out what content of type was");
+      }
 
-    if ( ctx.referencedType() != null ) {
+    }
+    else if ( ctx.referencedType() != null ) {
       log.debug("    -> Referenced Type");
       log.debug("      -> ${ctx.referencedType().definedType()}");
+    }
+    else {
+      throw new RuntimeException("Unhandled type");
     }
 
     log.debug("    -> ${ctx.constraint()}");
